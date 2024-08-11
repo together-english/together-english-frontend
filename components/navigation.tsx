@@ -3,10 +3,12 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import "../styles/globals.css";
+import { useAuth } from "@/contexts";
 
 export default function Navigation() {
   const path = usePathname();
   const router = useRouter();
+  const { loggedUser, logout } = useAuth();
 
   const getLinkClassName = (linkPath: String) => {
     const isActive = path === linkPath;
@@ -21,6 +23,12 @@ export default function Navigation() {
     router.push("/login");
   };
 
+  const onClickLogOut = () => {
+    logout(() => {
+      router.push("/");
+    });
+  };
+
   return (
     <nav className="bg-white border-gray-200 dark:bg-gray-900">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
@@ -32,14 +40,25 @@ export default function Navigation() {
             English Together
           </span>
         </Link>
-        <div className="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
-          <button
-            type="button"
-            onClick={handleGetStartedClick}
-            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-          >
-            Get started
-          </button>
+        <div className="flex md:order-2 md:space-x-3 rtl:space-x-reverse">
+          {!loggedUser && (
+            <button
+              type="button"
+              onClick={handleGetStartedClick}
+              className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+            >
+              Get started
+            </button>
+          )}
+          {loggedUser && (
+            <button
+              type="button"
+              onClick={onClickLogOut}
+              className="text-white scroll-m-3 bg-cyan-700 hover:bg-cyan-800 focus:ring-4 focus:outline-none focus:ring-cyan-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-cyan-600 dark:hover:bg-cyan-700 dark:focus:ring-cyan-800"
+            >
+              Log Out
+            </button>
+          )}
         </div>
         <div
           className="items-center justify-between hidden w-full md:flex md:w-auto md:order-1"
