@@ -1,5 +1,5 @@
-import Footer from "@/components/footer";
-import Navigation from "@/components/navigation";
+import Footer from "@/components/layout/footer";
+import Navigation from "@/components/layout/navigation";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "../../styles/globals.css";
