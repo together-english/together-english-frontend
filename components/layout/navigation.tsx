@@ -1,21 +1,27 @@
 "use client";
 
-import { useAuth } from "@/contexts";
-import "@/styles/globals.css";
+import { useState } from "react";
+import { Dialog, DialogPanel } from "@headlessui/react";
+import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { useAuth } from "@/contexts"; // 사용자 인증 상태를 관리하는 훅
+
+const navigation = [
+  { name: "Home", href: "/" },
+  { name: "About Us", href: "/about-us" },
+];
 
 export default function Navigation() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const path = usePathname();
   const router = useRouter();
   const { loggedUser, logout } = useAuth();
 
-  const getLinkClassName = (linkPath: String) => {
+  const getLinkClassName = (linkPath: string) => {
     const isActive = path === linkPath;
-    return `block py-2 px-3 md:p-0 rounded focus:outline-none ${
-      isActive
-        ? "text-blue-700 dark:text-blue-500"
-        : "text-gray-900 hover:bg-gray-100 md:hover:bg-trasparent md:hover:text-blue-700 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
+    return `text-gray-900 hover:text-cyan-600 ${
+      isActive ? "text-cyan-600" : ""
     }`;
   };
 
@@ -30,58 +36,148 @@ export default function Navigation() {
   };
 
   return (
-    <nav className="bg-white border-gray-200 dark:bg-gray-900">
-      <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-        <Link
-          href="/"
-          className="flex items-center space-x-3 rtl:space-x-reverse"
-        >
-          <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
-            English Together
-          </span>
-        </Link>
-        <div className="flex md:order-2 md:space-x-3 rtl:space-x-reverse">
-          {!loggedUser && (
+    <header className="bg-white border-b border-gray-200 z-50">
+      <nav
+        aria-label="Global"
+        className="flex items-center justify-between p-6 lg:px-8"
+      >
+        <div className="flex lg:flex-1">
+          <a href="/" className="flex items-center">
+            <span className="sr-only">English Together</span>
+            <svg
+              className="w-8 h-8 text-cyan-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M5 3v18l15-9L5 3z"
+              ></path>
+            </svg>
+            <span className="text-2xl font-semibold text-gray-900 ml-3">
+              English Together
+            </span>
+          </a>
+        </div>
+        <div className="hidden lg:flex lg:gap-x-12">
+          {navigation.map((item) => (
+            <Link
+              key={item.name}
+              href={item.href}
+              className={`text-sm font-semibold ${getLinkClassName(item.href)}`} // font-semibold로 변경
+              aria-current={path === item.href ? "page" : undefined}
+            >
+              {item.name}
+            </Link>
+          ))}
+        </div>
+        <div className="hidden lg:flex lg:flex-1 lg:justify-end">
+          {!loggedUser ? (
             <button
               type="button"
               onClick={handleGetStartedClick}
-              className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              className="text-white bg-cyan-600 hover:bg-cyan-700 focus:outline-none focus:ring-4 focus:ring-cyan-300 font-medium rounded-lg text-sm px-4 py-2"
             >
-              Get started
+              시작하기
             </button>
-          )}
-          {loggedUser && (
+          ) : (
             <button
               type="button"
               onClick={onClickLogOut}
-              className="text-white scroll-m-3 bg-cyan-700 hover:bg-cyan-800 focus:ring-4 focus:outline-none focus:ring-cyan-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-cyan-600 dark:hover:bg-cyan-700 dark:focus:ring-cyan-800"
+              className="text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-4 py-2"
             >
-              Log Out
+              로그아웃
             </button>
           )}
         </div>
-        <div
-          className="items-center justify-between hidden w-full md:flex md:w-auto md:order-1"
-          id="navbar-cta"
-        >
-          <ul className="flex flex-col font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
-            <li>
-              <Link
-                href="/"
-                className={getLinkClassName("/")}
-                aria-current="page"
-              >
-                Home
-              </Link>
-            </li>
-            <li>
-              <Link href="/about-us" className={getLinkClassName("/about-us")}>
-                About Us
-              </Link>
-            </li>
-          </ul>
+        <div className="lg:hidden flex items-center">
+          <button
+            type="button"
+            onClick={() => setMobileMenuOpen(true)}
+            className="-m-2.5 inline-flex items-center justify-center p-2.5 text-gray-700"
+          >
+            <span className="sr-only">메뉴 열기</span>
+            <Bars3Icon className="h-6 w-6" />
+          </button>
         </div>
-      </div>
-    </nav>
+      </nav>
+
+      <Dialog
+        open={mobileMenuOpen}
+        onClose={() => setMobileMenuOpen(false)}
+        className="lg:hidden"
+      >
+        <DialogPanel className="fixed inset-0 z-50 bg-white p-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
+          <div className="flex items-center justify-between">
+            <a href="/" className="flex items-center">
+              <span className="sr-only">English Together</span>
+              <svg
+                className="w-8 h-8 text-cyan-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M5 3v18l15-9L5 3z"
+                ></path>
+              </svg>
+              <span className="text-2xl font-semibold text-gray-900 ml-3">
+                English Together
+              </span>
+            </a>
+            <button
+              type="button"
+              onClick={() => setMobileMenuOpen(false)}
+              className="-m-2.5 p-2.5 text-gray-700"
+            >
+              <span className="sr-only">메뉴 닫기</span>
+              <XMarkIcon className="h-6 w-6" />
+            </button>
+          </div>
+          <div className="mt-6">
+            <div className="space-y-2">
+              {navigation.map((item) => (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className={`-mx-3 block rounded-lg px-3 py-2 text-base font-semibold text-gray-900 hover:bg-gray-50 ${
+                    path === item.href ? "bg-gray-100" : ""
+                  }`}
+                >
+                  {item.name}
+                </Link>
+              ))}
+            </div>
+            <div className="mt-6">
+              {!loggedUser ? (
+                <button
+                  type="button"
+                  onClick={handleGetStartedClick}
+                  className="block w-full text-center bg-cyan-600 text-white rounded-lg px-3 py-2 text-base font-semibold hover:bg-cyan-700"
+                >
+                  시작하기
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={onClickLogOut}
+                  className="block w-full text-center bg-red-600 text-white rounded-lg px-3 py-2 text-base font-semibold hover:bg-red-700"
+                >
+                  로그아웃
+                </button>
+              )}
+            </div>
+          </div>
+        </DialogPanel>
+      </Dialog>
+    </header>
   );
 }
