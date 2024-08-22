@@ -1,9 +1,10 @@
 "use client";
-import "../../../styles/globals.css";
-import { ChangeEvent, useCallback, useState } from "react";
-import { useRouter } from "next/navigation";
+import EmailInput from "@/components/input/emailInput";
 import { useAuth } from "@/contexts";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { ChangeEvent, useCallback, useState } from "react";
+import "../../../styles/globals.css";
 
 type SignUpFormType = Record<
   "name" | "email" | "password" | "confirmPassword",
@@ -20,12 +21,22 @@ export default function register() {
       password: "",
       confirmPassword: "",
     });
+  const [isEmailValid, setIsEmailValid] = useState<boolean>(false);
+  const handleEmailChange = (newEmail: string, isValid: boolean) => {
+    setForm((prevForm) => ({
+      ...prevForm,
+      email: newEmail,
+    }));
+    setIsEmailValid(isValid);
+    console.log("Email changed to:", newEmail, "Is valid:", isValid);
+  };
   const changed = useCallback(
     (key: string) => (e: ChangeEvent<HTMLInputElement>) => {
       setForm((obj) => ({ ...obj, [key]: e.target.value }));
     },
     []
   );
+
   const createAcount = useCallback(() => {
     console.log(name, email, password, confirmPassword);
     if (password === confirmPassword) {
@@ -65,14 +76,7 @@ export default function register() {
             >
               이메일
             </label>
-            <input
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:text-gray-300 leading-tight focus:outline-none focus:shadow-outline"
-              id="email"
-              type="email"
-              value={email}
-              onChange={changed("email")}
-              placeholder="Email"
-            />
+            <EmailInput onEmailChange={handleEmailChange} />
           </div>
           <div className="mb-2">
             <label
