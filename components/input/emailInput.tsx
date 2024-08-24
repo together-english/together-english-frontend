@@ -26,7 +26,7 @@ const EmailInput: React.FC<EmailInputProps> = ({ onEmailChange }) => {
     const isValid = validateEmail(inputEmail);
 
     setEmail(inputEmail);
-    setError(isValid ? "" : "Invalid email address");
+    setError(isValid ? "" : "이메일 형식이 잘못되었습니다.");
 
     onEmailChange(inputEmail, isValid);
   };

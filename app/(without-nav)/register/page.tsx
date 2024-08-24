@@ -7,16 +7,17 @@ import { ChangeEvent, useCallback, useState } from "react";
 import "../../../styles/globals.css";
 
 type SignUpFormType = Record<
-  "name" | "email" | "password" | "confirmPassword",
+  "name" | "nickname" | "email" | "password" | "confirmPassword",
   string
 >;
 
 export default function register() {
   const { signup } = useAuth();
   const router = useRouter();
-  const [{ name, email, password, confirmPassword }, setForm] =
+  const [{ name, nickname, email, password, confirmPassword }, setForm] =
     useState<SignUpFormType>({
       name: "",
+      nickname: "",
       email: "",
       password: "",
       confirmPassword: "",
@@ -39,11 +40,27 @@ export default function register() {
 
   const createAcount = useCallback(() => {
     console.log(name, email, password, confirmPassword);
-    if (password === confirmPassword) {
-      signup(email, password, () => router.push("/"));
-    } else {
-      alert("비밀번호와 확인비밀번호가 틀립니다.");
+    if (name == "") {
+      alert("이름을 입력해주세요");
+      return;
     }
+    if (nickname == "") {
+      alert("닉네임을 입력해주세요");
+      return;
+    }
+    if (email == "") {
+      alert("이메일을 입력해주세요");
+      return;
+    }
+    if (isEmailValid) {
+      alert("이메일 형식이 잘못 되었습니다.");
+      return;
+    }
+    if (password !== confirmPassword) {
+      alert("비밀번호와 확인비밀번호가 틀립니다.");
+      return;
+    }
+    signup(email, password, () => router.push("/"));
   }, [email, password, confirmPassword, signup]);
 
   return (
@@ -67,6 +84,22 @@ export default function register() {
               value={name}
               onChange={changed("name")}
               placeholder="Username"
+            />
+          </div>
+          <div className="mb-4">
+            <label
+              className="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2"
+              htmlFor="username"
+            >
+              닉네임
+            </label>
+            <input
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:text-gray-300 leading-tight focus:outlnie-none focus:shadow-outline"
+              id="nickname"
+              type="text"
+              value={nickname}
+              onChange={changed("nickname")}
+              placeholder="Nickname"
             />
           </div>
           <div className="mb-4">
