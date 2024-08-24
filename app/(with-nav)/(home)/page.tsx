@@ -4,7 +4,7 @@ export default function Home() {
   return (
     <div>
       {/* Hero Section */}
-      <section className="relative isolate px-6 pt-14 lg:px-8 bg-white text-black">
+      <section className="relative isolate px-6 lg:px-8 bg-white text-black">
         <div className="inset-0 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80 absolute">
           <div
             style={{
@@ -25,12 +25,6 @@ export default function Home() {
               경험해보세요!
             </p>
             <div className="mt-10 flex justify-center gap-x-6">
-              <Link
-                href="/register"
-                className="rounded-md bg-yellow-500 px-3.5 py-2.5 text-sm font-semibold text-black shadow-sm hover:bg-yellow-600"
-              >
-                시작하기
-              </Link>
               <Link
                 href="/about-us"
                 className="text-sm font-semibold leading-6 text-black"

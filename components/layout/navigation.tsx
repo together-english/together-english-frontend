@@ -36,10 +36,10 @@ export default function Navigation() {
   };
 
   return (
-    <header className="bg-white border-b border-gray-200 z-50">
+    <header className=" bg-white/30 border-b border-gray-200 z-50">
       <nav
         aria-label="Global"
-        className="flex items-center justify-between p-6 lg:px-8"
+        className="flex items-center justify-between p-4 lg:px-8"
       >
         <div className="flex lg:flex-1">
           <a href="/" className="flex items-center">
