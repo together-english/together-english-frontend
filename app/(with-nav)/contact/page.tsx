@@ -72,7 +72,6 @@ export default function Contact() {
               <textarea
                 id="message"
                 name="message"
-                rows="4"
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-cyan-500 focus:ring-cyan-500 sm:text-sm"
                 placeholder="여기에 메시지를 작성하세요."
               ></textarea>
