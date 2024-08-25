@@ -1,46 +1,41 @@
-"use client";
+'use client'
 
-import { useState } from "react";
-import { Dialog, DialogPanel } from "@headlessui/react";
-import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
-import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { useAuth } from "@/contexts"; // 사용자 인증 상태를 관리하는 훅
+import {useState} from 'react'
+import {Dialog, DialogPanel} from '@headlessui/react'
+import {Bars3Icon, XMarkIcon} from '@heroicons/react/24/outline'
+import Link from 'next/link'
+import {usePathname, useRouter} from 'next/navigation'
+import {useAuth} from '@/contexts' // 사용자 인증 상태를 관리하는 훅
 
 const navigation = [
-  { name: "Home", href: "/" },
-  { name: "About Us", href: "/about-us" },
-];
+  {name: 'Home', href: '/'},
+  {name: 'About Us', href: '/about-us'}
+]
 
 export default function Navigation() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const path = usePathname();
-  const router = useRouter();
-  const { loggedUser, logout } = useAuth();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const path = usePathname()
+  const router = useRouter()
+  const {loggedUser, logout} = useAuth()
 
   const getLinkClassName = (linkPath: string) => {
-    const isActive = path === linkPath;
-    return `text-gray-900 hover:text-cyan-600 ${
-      isActive ? "text-cyan-600" : ""
-    }`;
-  };
+    const isActive = path === linkPath
+    return `text-gray-900 hover:text-cyan-600 ${isActive ? 'text-cyan-600' : ''}`
+  }
 
   const handleGetStartedClick = () => {
-    router.push("/login");
-  };
+    router.push('/login')
+  }
 
   const onClickLogOut = () => {
     logout(() => {
-      router.push("/");
-    });
-  };
+      router.push('/')
+    })
+  }
 
   return (
     <header className=" bg-white/30 border-b border-gray-200 z-50">
-      <nav
-        aria-label="Global"
-        className="flex items-center justify-between p-4 lg:px-8"
-      >
+      <nav aria-label="Global" className="flex items-center justify-between p-4 lg:px-8">
         <div className="flex lg:flex-1">
           <a href="/" className="flex items-center">
             <span className="sr-only">English Together</span>
@@ -64,12 +59,12 @@ export default function Navigation() {
           </a>
         </div>
         <div className="hidden lg:flex lg:gap-x-12">
-          {navigation.map((item) => (
+          {navigation.map(item => (
             <Link
               key={item.name}
               href={item.href}
               className={`text-sm font-semibold ${getLinkClassName(item.href)}`} // font-semibold로 변경
-              aria-current={path === item.href ? "page" : undefined}
+              aria-current={path === item.href ? 'page' : undefined}
             >
               {item.name}
             </Link>
@@ -144,12 +139,12 @@ export default function Navigation() {
           </div>
           <div className="mt-6">
             <div className="space-y-2">
-              {navigation.map((item) => (
+              {navigation.map(item => (
                 <Link
                   key={item.name}
                   href={item.href}
                   className={`-mx-3 block rounded-lg px-3 py-2 text-base font-semibold text-gray-900 hover:bg-gray-50 ${
-                    path === item.href ? "bg-gray-100" : ""
+                    path === item.href ? 'bg-gray-100' : ''
                   }`}
                 >
                   {item.name}
@@ -179,5 +174,5 @@ export default function Navigation() {
         </DialogPanel>
       </Dialog>
     </header>
-  );
+  )
 }

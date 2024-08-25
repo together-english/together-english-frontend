@@ -1,37 +1,36 @@
-"use client";
-import type { ChangeEvent } from "react";
-import { useState, useCallback, useEffect } from "react";
-import Link from "next/link";
-import "../../../styles/globals.css";
-import { useAuth } from "@/contexts";
-import { useRouter } from "next/navigation";
-import * as U from "@/utils";
+'use client'
+import type {ChangeEvent} from 'react'
+import {useState, useCallback, useEffect} from 'react'
+import Link from 'next/link'
+import '../../../styles/globals.css'
+import {useAuth} from '@/contexts'
+import {useRouter} from 'next/navigation'
+import * as U from '@/utils'
 
-type LoginFormType = Record<"email" | "password", string>;
-const initialFormState = { email: "", password: "" };
+type LoginFormType = Record<'email' | 'password', string>
+const initialFormState = {email: '', password: ''}
 
 export default function login() {
-  const [{ email, password }, setForm] =
-    useState<LoginFormType>(initialFormState);
+  const [{email, password}, setForm] = useState<LoginFormType>(initialFormState)
   const changed = useCallback(
     (key: string) => (e: ChangeEvent<HTMLInputElement>) => {
-      setForm((obj) => ({ ...obj, [key]: e.target.value }));
+      setForm(obj => ({...obj, [key]: e.target.value}))
     },
     []
-  );
-  const router = useRouter();
-  const { login } = useAuth();
+  )
+  const router = useRouter()
+  const {login} = useAuth()
   const loginAccount = useCallback(() => {
-    login(email, password, () => router.push("/"));
-  }, [email, password, login, router]);
+    login(email, password, () => router.push('/'))
+  }, [email, password, login, router])
 
   useEffect(() => {
-    U.readObjectP<LoginFormType>("user")
-      .then((user) => {
-        if (user) setForm(user);
+    U.readObjectP<LoginFormType>('user')
+      .then(user => {
+        if (user) setForm(user)
       })
-      .catch((e) => {});
-  }, []);
+      .catch(e => {})
+  }, [])
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-800">
@@ -58,7 +57,7 @@ export default function login() {
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:text-gray-300 leading-tight focus:outline-none focus:shadow-outline"
               id="email"
               value={email}
-              onChange={changed("email")}
+              onChange={changed('email')}
               type="text"
               placeholder="Username"
             />
@@ -74,7 +73,7 @@ export default function login() {
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:text-gray-300 mb-3 leading-tight focus:outline-none focus:shadow-outline"
               id="password"
               type="password"
-              onChange={changed("password")}
+              onChange={changed('password')}
               value={password}
               placeholder="********"
             />
@@ -103,5 +102,5 @@ export default function login() {
         </form>
       </div>
     </div>
-  );
+  )
 }

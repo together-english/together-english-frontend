@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 export default function Footer() {
   return (
@@ -56,10 +56,7 @@ export default function Footer() {
               </a>
             </li>
             <li>
-              <a
-                href="/contact"
-                className="hover:text-cyan-600 dark:hover:text-cyan-400"
-              >
+              <a href="/contact" className="hover:text-cyan-600 dark:hover:text-cyan-400">
                 Contact
               </a>
             </li>
@@ -71,7 +68,7 @@ export default function Footer() {
 
         {/* 저작권 정보 */}
         <span className="block text-sm text-gray-500 sm:text-center dark:text-gray-400">
-          © {new Date().getFullYear()}{" "}
+          © {new Date().getFullYear()}{' '}
           <a href="#" className="hover:text-cyan-600 dark:hover:text-cyan-400">
             English Together™
           </a>
@@ -79,5 +76,5 @@ export default function Footer() {
         </span>
       </div>
     </footer>
-  );
+  )
 }

@@ -1,20 +1,20 @@
-import Footer from "@/components/layout/footer";
-import Navigation from "@/components/layout/navigation";
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "../../styles/globals.css";
+import Footer from '@/components/layout/footer'
+import Navigation from '@/components/layout/navigation'
+import type {Metadata} from 'next'
+import {Inter} from 'next/font/google'
+import '../../styles/globals.css'
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({subsets: ['latin']})
 
 export const metadata: Metadata = {
-  title: "English Together",
-  description: "영어 학습을 돕는 프로그램입니다.",
-};
+  title: 'English Together',
+  description: '영어 학습을 돕는 프로그램입니다.'
+}
 
 export default function RootLayout({
-  children,
+  children
 }: Readonly<{
-  children: React.ReactNode;
+  children: React.ReactNode
 }>) {
   return (
     <html lang="kr">
@@ -24,5 +24,5 @@ export default function RootLayout({
         <Footer />
       </body>
     </html>
-  );
+  )
 }

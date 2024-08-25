@@ -7,19 +7,17 @@ export default function Contact() {
           <div
             style={{
               clipPath:
-                "polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)",
+                'polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)'
             }}
             className="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#00b4d8] to-[#0077b6] opacity-30 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]"
           />
         </div>
         <div className="mx-auto max-w-2xl py-32 sm:py-48 lg:py-56">
           <div className="text-center">
-            <h1 className="text-4xl font-bold tracking-tight sm:text-6xl">
-              문의하기
-            </h1>
+            <h1 className="text-4xl font-bold tracking-tight sm:text-6xl">문의하기</h1>
             <p className="mt-6 text-lg leading-8">
-              궁금한 점이나 제안 사항이 있다면 언제든지 연락주세요. 우리의 팀이
-              신속하게 응답해드리겠습니다.
+              궁금한 점이나 제안 사항이 있다면 언제든지 연락주세요. 우리의 팀이 신속하게
+              응답해드리겠습니다.
             </p>
           </div>
         </div>
@@ -28,15 +26,10 @@ export default function Contact() {
       {/* Contact Form Section */}
       <section className="py-16 bg-gray-100">
         <div className="max-w-screen-md mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12 text-black">
-            연락하기
-          </h2>
+          <h2 className="text-3xl font-bold text-center mb-12 text-black">연락하기</h2>
           <form className="space-y-6">
             <div>
-              <label
-                htmlFor="name"
-                className="block text-sm font-medium text-black"
-              >
+              <label htmlFor="name" className="block text-sm font-medium text-black">
                 이름
               </label>
               <input
@@ -48,10 +41,7 @@ export default function Contact() {
               />
             </div>
             <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-black"
-              >
+              <label htmlFor="email" className="block text-sm font-medium text-black">
                 이메일
               </label>
               <input
@@ -63,10 +53,7 @@ export default function Contact() {
               />
             </div>
             <div>
-              <label
-                htmlFor="message"
-                className="block text-sm font-medium text-black"
-              >
+              <label htmlFor="message" className="block text-sm font-medium text-black">
                 메시지
               </label>
               <textarea
@@ -103,5 +90,5 @@ export default function Contact() {
         </div>
       </section>
     </div>
-  );
+  )
 }

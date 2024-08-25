@@ -1,10 +1,7 @@
-import * as T from "./types";
+import * as T from './types'
 
-const initializeStore: T.State = {};
+const initializeStore: T.State = {}
 
-export const reducer = (
-  state: T.State = initializeStore,
-  action: T.Actions
-) => {
-  return state;
-};
+export const reducer = (state: T.State = initializeStore, action: T.Actions) => {
+  return state
+}

@@ -1,67 +1,67 @@
-"use client";
-import EmailInput from "@/components/input/emailInput";
-import { useAuth } from "@/contexts";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { ChangeEvent, useCallback, useState } from "react";
-import "../../../styles/globals.css";
+'use client'
+import EmailInput from '@/components/input/emailInput'
+import {useAuth} from '@/contexts'
+import Link from 'next/link'
+import {useRouter} from 'next/navigation'
+import {ChangeEvent, useCallback, useState} from 'react'
+import '../../../styles/globals.css'
 
 type SignUpFormType = Record<
-  "name" | "nickname" | "email" | "password" | "confirmPassword",
+  'name' | 'nickname' | 'email' | 'password' | 'confirmPassword',
   string
->;
+>
 
 export default function register() {
-  const { signup } = useAuth();
-  const router = useRouter();
-  const [{ name, nickname, email, password, confirmPassword }, setForm] =
+  const {signup} = useAuth()
+  const router = useRouter()
+  const [{name, nickname, email, password, confirmPassword}, setForm] =
     useState<SignUpFormType>({
-      name: "",
-      nickname: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
-    });
-  const [isEmailValid, setIsEmailValid] = useState<boolean>(false);
+      name: '',
+      nickname: '',
+      email: '',
+      password: '',
+      confirmPassword: ''
+    })
+  const [isEmailValid, setIsEmailValid] = useState<boolean>(false)
   const handleEmailChange = (newEmail: string, isValid: boolean) => {
-    setForm((prevForm) => ({
+    setForm(prevForm => ({
       ...prevForm,
-      email: newEmail,
-    }));
-    setIsEmailValid(isValid);
-    console.log("Email changed to:", newEmail, "Is valid:", isValid);
-  };
+      email: newEmail
+    }))
+    setIsEmailValid(isValid)
+    console.log('Email changed to:', newEmail, 'Is valid:', isValid)
+  }
   const changed = useCallback(
     (key: string) => (e: ChangeEvent<HTMLInputElement>) => {
-      setForm((obj) => ({ ...obj, [key]: e.target.value }));
+      setForm(obj => ({...obj, [key]: e.target.value}))
     },
     []
-  );
+  )
 
   const createAcount = useCallback(() => {
-    console.log(name, email, password, confirmPassword);
-    if (name == "") {
-      alert("이름을 입력해주세요");
-      return;
+    console.log(name, email, password, confirmPassword)
+    if (name == '') {
+      alert('이름을 입력해주세요')
+      return
     }
-    if (nickname == "") {
-      alert("닉네임을 입력해주세요");
-      return;
+    if (nickname == '') {
+      alert('닉네임을 입력해주세요')
+      return
     }
-    if (email == "") {
-      alert("이메일을 입력해주세요");
-      return;
+    if (email == '') {
+      alert('이메일을 입력해주세요')
+      return
     }
     if (isEmailValid) {
-      alert("이메일 형식이 잘못 되었습니다.");
-      return;
+      alert('이메일 형식이 잘못 되었습니다.')
+      return
     }
     if (password !== confirmPassword) {
-      alert("비밀번호와 확인비밀번호가 틀립니다.");
-      return;
+      alert('비밀번호와 확인비밀번호가 틀립니다.')
+      return
     }
-    signup(email, password, () => router.push("/"));
-  }, [email, password, confirmPassword, signup]);
+    signup(email, password, () => router.push('/'))
+  }, [email, password, confirmPassword, signup])
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-800">
@@ -82,7 +82,7 @@ export default function register() {
               id="username"
               type="text"
               value={name}
-              onChange={changed("name")}
+              onChange={changed('name')}
               placeholder="Username"
             />
           </div>
@@ -98,7 +98,7 @@ export default function register() {
               id="nickname"
               type="text"
               value={nickname}
-              onChange={changed("nickname")}
+              onChange={changed('nickname')}
               placeholder="Nickname"
             />
           </div>
@@ -123,7 +123,7 @@ export default function register() {
               id="password"
               type="password"
               value={password}
-              onChange={changed("password")}
+              onChange={changed('password')}
               placeholder="********"
             />
           </div>
@@ -139,7 +139,7 @@ export default function register() {
               id="confirmPassword"
               type="password"
               value={confirmPassword}
-              onChange={changed("confirmPassword")}
+              onChange={changed('confirmPassword')}
               placeholder="********"
             />
           </div>
@@ -161,5 +161,5 @@ export default function register() {
         </form>
       </div>
     </div>
-  );
+  )
 }
