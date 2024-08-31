@@ -17,5 +17,16 @@ export const writeItemToStorageP = (key: string, value: string) =>
     }
   })
 
+export const removeItemFromStorageP = (key: string) =>
+  new Promise<void>((resolve, reject) => {
+    try {
+      localStorage.removeItem(key)
+      resolve()
+    } catch (e) {
+      reject(e)
+    }
+  })
+
 export const readStringP = readItemFromStorageP
 export const writeStringP = writeItemToStorageP
+export const removeStringP = removeItemFromStorageP

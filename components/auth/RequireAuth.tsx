@@ -6,12 +6,12 @@ import {useAuth} from '@/contexts'
 type RequireAuthProps = {}
 
 const RequireAuth: FC<PropsWithChildren<RequireAuthProps>> = ({children}) => {
-  const {loggedUser} = useAuth()
+  const {signInResponse} = useAuth()
   const router = useRouter()
 
   useEffect(() => {
-    if (!loggedUser) router.back()
-  }, [loggedUser, router])
+    if (!signInResponse) router.back()
+  }, [signInResponse, router])
 
   return <>{children}</>
 }

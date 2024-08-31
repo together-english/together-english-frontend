@@ -52,7 +52,7 @@ export default function register() {
       alert('이메일을 입력해주세요')
       return
     }
-    if (isEmailValid) {
+    if (!isEmailValid) {
       alert('이메일 형식이 잘못 되었습니다.')
       return
     }
@@ -60,7 +60,15 @@ export default function register() {
       alert('비밀번호와 확인비밀번호가 틀립니다.')
       return
     }
-    signup(email, password, () => router.push('/'))
+    signup(
+      {
+        name: name,
+        nickname: nickname,
+        email: email,
+        password: password
+      },
+      undefined
+    )
   }, [email, password, confirmPassword, signup])
 
   return (
@@ -73,8 +81,7 @@ export default function register() {
           <div className="mb-4">
             <label
               className="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2"
-              htmlFor="username"
-            >
+              htmlFor="username">
               이름
             </label>
             <input
@@ -89,8 +96,7 @@ export default function register() {
           <div className="mb-4">
             <label
               className="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2"
-              htmlFor="username"
-            >
+              htmlFor="username">
               닉네임
             </label>
             <input
@@ -105,8 +111,7 @@ export default function register() {
           <div className="mb-4">
             <label
               className="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2"
-              htmlFor="email"
-            >
+              htmlFor="email">
               이메일
             </label>
             <EmailInput onEmailChange={handleEmailChange} />
@@ -114,8 +119,7 @@ export default function register() {
           <div className="mb-2">
             <label
               className="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2"
-              htmlFor="password"
-            >
+              htmlFor="password">
               비밀번호
             </label>
             <input
@@ -130,8 +134,7 @@ export default function register() {
           <div className="mb-6">
             <label
               className="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2"
-              htmlFor="confirmPassword"
-            >
+              htmlFor="confirmPassword">
               비밀번호확인
             </label>
             <input
@@ -147,14 +150,12 @@ export default function register() {
             <button
               className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
               type="button"
-              onClick={createAcount}
-            >
+              onClick={createAcount}>
               등록하기
             </button>
             <Link
               className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800"
-              href="/login"
-            >
+              href="/login">
               이미 계정이 있으신가요?
             </Link>
           </div>

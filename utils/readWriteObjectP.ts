@@ -9,3 +9,15 @@ export const readObjectP = <T extends object>(key: string) =>
 
 export const writeObjectP = (key: string, value: object) =>
   L.writeStringP(key, JSON.stringify(value))
+
+export const removeObjectP = (key: string): Promise<void> => {
+  return new Promise<void>((resolve, reject) => {
+    try {
+      L.removeStringP(key)
+        .then(() => resolve())
+        .catch(reject)
+    } catch (error) {
+      reject(error)
+    }
+  })
+}
