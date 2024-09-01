@@ -38,11 +38,13 @@ export const AuthProvider: FC<PropsWithChildren<AuthProviderProps>> = ({children
         const {status, data, message} = result
         if (result.status === StatusEnum.SUCCESS) {
           router.push('/')
+          callback && callback()
         } else {
           alert(message)
         }
+        U.removeItemFromStorageP('signInResponse')
+        setSignInResponse(undefined)
       })
-    callback && callback()
   }, [])
   const login = useCallback((email: string, password: string, callback?: Callback) => {
     const user = {email, password}
@@ -52,11 +54,11 @@ export const AuthProvider: FC<PropsWithChildren<AuthProviderProps>> = ({children
         if (result.status === StatusEnum.SUCCESS && result.data) {
           U.writeObjectP('signInResponse', result.data)
           setSignInResponse(result.data)
+          callback && callback()
         } else {
           alert(result.message)
         }
       })
-    callback && callback()
   }, [])
   const logout = useCallback((callback?: Callback) => {
     U.removeItemFromStorageP('signInResponse')

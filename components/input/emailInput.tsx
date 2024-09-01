@@ -31,23 +31,16 @@ const EmailInput: React.FC<EmailInputProps> = ({onEmailChange}) => {
     onEmailChange(inputEmail, isValid)
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (error === '') {
-      alert('Email submitted: ' + email)
-    }
-  }
-
   return (
     <div>
       <input
         type="email"
         id="email"
+        required
         value={email}
         onChange={handleChange}
-        className={`mt-1 block w-full px-3 py-2 border ${
-          error ? 'border-red-500' : 'border-gray-300'
-        } rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`}
+        className={` mt-2 appearance-none text-slate-900 bg-white rounded-md block w-full px-3 h-10 shadow-sm sm:text-sm focus:outline-none placeholder:text-slate-400 focus:ring-2 focus:ring-cyan-600 ring-2 ring-slate-300 
+        ${error ? 'border-red-500' : 'border-gray-300'} `}
         placeholder="you@example.com"
       />
       {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
