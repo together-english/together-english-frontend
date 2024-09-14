@@ -37,7 +37,7 @@ export const AuthProvider: FC<PropsWithChildren<AuthProviderProps>> = ({children
       .then((result: {status: string; data?: string; message: string}) => {
         const {status, data, message} = result
         if (result.status === StatusEnum.SUCCESS) {
-          router.push('/')
+          router.push('/congratulation')
           callback && callback()
         } else {
           alert(message)
