@@ -14,23 +14,26 @@ import {useAuth} from '@/contexts'
 
 const navigation = [
   {name: 'Home', href: '/'},
-  {name: 'About Us', href: '/about-us'}
+  {name: 'About Us', href: '/about-us'},
+  {name: '영어모임 둘러보기', href: '/circle'}
 ]
 
 const userOptions = [
-  {name: '내가 찜한 그룹', value: 'favoriteGroups'},
-  {name: '나의 페이지', value: 'myPage'},
+  {name: '내가 찜한 모임', value: 'favoriteGroups'},
+  {name: '내가 만든 모임', value: 'myGroups'},
+  {name: '나의 페이지', value: 'mypage'},
   {name: '로그아웃', value: 'logout'}
 ]
 
 export default function Navigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const [selectedOption, setSelectedOption] = useState(userOptions[0])
+  const [selectedOption, setSelectedOption] = useState()
   const path = usePathname()
   const router = useRouter()
   const {signInResponse, logout} = useAuth()
 
   const handleSelectChange = (option: any) => {
+    setSelectedOption(option)
     if (option.value === 'logout') {
       logout(() => {
         router.push('/')
@@ -68,13 +71,18 @@ export default function Navigation() {
             <Link
               key={item.name}
               href={item.href}
-              className="text-sm font-semibold text-gray-900 hover:text-cyan-600"
+              className={`text-sm font-semibold py-2 ${
+                item.name === '영어모임 둘러보기'
+                  ? 'text-white bg-cyan-600 px-4 rounded-lg font-bold hover:text-gray-900'
+                  : 'text-gray-900 hover:text-cyan-600'
+              }`}
               aria-current={path === item.href ? 'page' : undefined}>
               {item.name}
             </Link>
           ))}
         </div>
-        <div className="hidden lg:flex lg:flex-1 lg:justify-end lg:items-center">
+
+        <div className="flex lg:flex-1 lg:justify-end lg:items-center">
           {signInResponse ? (
             <Listbox value={selectedOption} onChange={handleSelectChange}>
               <div className="relative mt-1">

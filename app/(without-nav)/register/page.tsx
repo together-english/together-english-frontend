@@ -1,5 +1,5 @@
 'use client'
-import EmailInput from '@/components/input/emailInput'
+import EmailInput from '@/components/input/EmailInput'
 import {useAuth} from '@/contexts'
 import Link from 'next/link'
 import {useRouter} from 'next/navigation'
