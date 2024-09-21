@@ -41,45 +41,6 @@ export default function About() {
         </div>
       </section>
 
-      {/* Our Team Section */}
-      <section className="py-16 bg-white">
-        <div className="max-w-screen-xl mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12 text-black">우리 팀</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {/* Team Member 1 */}
-            <div className="text-center">
-              <img
-                className="mx-auto w-32 h-32 rounded-full mb-4"
-                src="/team-member-1.jpg"
-                alt="팀원 1"
-              />
-              <h3 className="text-xl font-semibold text-black">홍길동</h3>
-              <p className="text-black">CEO & Founder</p>
-            </div>
-            {/* Team Member 2 */}
-            <div className="text-center">
-              <img
-                className="mx-auto w-32 h-32 rounded-full mb-4"
-                src="/team-member-2.jpg"
-                alt="팀원 2"
-              />
-              <h3 className="text-xl font-semibold text-black">김영희</h3>
-              <p className="text-black">CTO</p>
-            </div>
-            {/* Team Member 3 */}
-            <div className="text-center">
-              <img
-                className="mx-auto w-32 h-32 rounded-full mb-4"
-                src="/team-member-3.jpg"
-                alt="팀원 3"
-              />
-              <h3 className="text-xl font-semibold text-black">박철수</h3>
-              <p className="text-black">COO</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Call to Action Section */}
       <section className="py-16 bg-gray-100">
         <div className="max-w-screen-xl mx-auto px-4 text-center">
@@ -90,8 +51,7 @@ export default function About() {
           </p>
           <Link
             href="/contact"
-            className="text-sm font-semibold leading-6 text-black bg-blue-500 px-6 py-3 rounded-full"
-          >
+            className="text-sm font-semibold leading-6 text-black bg-cyan-600 hover:bg-cyan-700 px-6 py-3 rounded-full">
             지금 가입하기
           </Link>
         </div>

@@ -20,23 +20,19 @@ export default function Home() {
               함께하는 영어 학습, 새로운 차원으로
             </h1>
             <p className="mt-6 text-lg leading-8">
-              영어 학습 동료와 함께 지역 카페에서 공부하며 영어 실력을 키우세요. 비슷한
-              수준의 학습자들과 만나 재미있고 효과적인 학습을 경험해보세요!
+              영어 학습이 더 이상 혼자만의 여정이 아닙니다. English Together에서 당신만의
+              학습 파트너와 함께 새로운 영어 학습의 길을 열어보세요.
             </p>
             <div className="mt-10 flex justify-center gap-x-6">
-              <Link
-                href="/about-us"
-                className="text-sm font-semibold leading-6 text-black"
-              >
-                더 알아보기 <span aria-hidden="true">→</span>
+              <Link href="/circle" className="text-sm font-semibold leading-6 text-black">
+                영어모임 둘러보기 <span aria-hidden="true">→</span>
               </Link>
             </div>
           </div>
         </div>
         <div
           aria-hidden="true"
-          className="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]"
-        >
+          className="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]">
           <div
             style={{
               clipPath:
@@ -70,10 +66,12 @@ export default function Home() {
             </div>
             {/* Feature 3 */}
             <div className="bg-gray-100 p-6 rounded-lg shadow-lg">
-              <h3 className="text-xl font-semibold mb-4 text-black">연습 문제 제공</h3>
+              <h3 className="text-xl font-semibold mb-4 text-black">
+                맞춤형 학습 자료 제공
+              </h3>
               <p>
-                맞춤형 영어 문제와 연습 자료를 제공받아 학습을 안내하고 기술을
-                향상시키세요.
+                각 학습자에게 맞춤형 영어 문제와 연습 자료를 제공하여 학습을 안내하고
+                실력을 향상시킬 수 있습니다.
               </p>
             </div>
           </div>
@@ -110,6 +108,22 @@ export default function Home() {
               <p className="font-semibold text-black">- 박민수</p>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Call to Action Section */}
+      <section className="py-16 bg-white">
+        <div className="max-w-screen-xl mx-auto px-4 text-center">
+          <h2 className="text-3xl font-bold mb-8 text-black">지금 시작해보세요</h2>
+          <p className="text-lg leading-8 text-black mb-8">
+            English Together와 함께라면 영어 학습이 쉽고 즐거워집니다. 지금 가입하여
+            나만의 학습 커뮤니티를 만나보세요.
+          </p>
+          <Link
+            href="/signup"
+            className="text-sm font-semibold leading-6 text-white bg-cyan-600 hover:bg-cyan-700 px-6 py-3 rounded-full">
+            지금 가입하기
+          </Link>
         </div>
       </section>
     </div>
