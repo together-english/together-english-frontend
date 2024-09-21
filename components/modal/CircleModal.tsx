@@ -67,22 +67,22 @@ const CircleModal: React.FC<CircleModalProps> = ({isOpen, onClose, targetUrl}) =
         <div className="bg-white p-8 rounded-lg shadow-xl max-w-lg w-full">
           <h3 className="text-lg font-semibold text-gray-700 mb-4">필터 설정</h3>
 
-          {/* 서클 이름 검색 */}
+          {/* 영어모임 검색 */}
           <div className="mb-4">
-            <h4 className="text-sm font-medium text-gray-600">서클 이름 검색</h4>
+            <h4 className="text-sm font-medium text-gray-600 mb-2">영어모임 검색</h4>
             <input
               type="text"
               value={circleName}
               onChange={e => setCircleName(e.target.value)}
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-600"
-              placeholder="서클 이름을 입력하세요"
+              placeholder="영어모임 이름을 입력하세요"
             />
           </div>
 
           {/* 도시 필터 */}
           <div className="mb-4">
             <h4 className="text-sm font-medium text-gray-600">도시 선택</h4>
-            <div className="grid grid-cols-2 gap-4 mt-2">
+            <div className="grid grid-cols-4 gap-4 mt-2">
               {City.map(city => (
                 <label key={city.value} className="flex items-center space-x-2">
                   <input

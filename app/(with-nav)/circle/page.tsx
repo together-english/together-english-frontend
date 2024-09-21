@@ -4,15 +4,19 @@ import {useState, useEffect} from 'react'
 import CircleModal from '@/components/modal/CircleModal'
 import Circle from '@/components/Circle'
 import {CircleInterface} from '@/types/circleInterface'
+import Pagination from '@/components/Pagination'
+import {useRouter} from 'next/navigation'
+import {useAuth} from '@/contexts'
+import LoginModal from '@/components/modal/LoginModal'
 
 const CircleListPage: NextPage = () => {
+  const router = useRouter()
+  const {signInResponse} = useAuth()
   const [circles, setCircles] = useState<CircleInterface[]>([])
   const [currentPage, setCurrentPage] = useState<number>(1)
-  const [selectedCity, setSelectedCity] = useState<string>('')
-  const [selectedLevel, setSelectedLevel] = useState<string>('')
   const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false)
-
-  const itemsPerPage = 12
+  const [showLoginModal, setShowLoginModal] = useState(false)
+  const totalPages = 20
 
   useEffect(() => {
     // 테스트 데이터를 로컬에서 설정
@@ -20,188 +24,190 @@ const CircleListPage: NextPage = () => {
       {
         id: 1,
         name: '고급 영어 학습 그룹',
-        english_level: '고급',
+        englishLevel: '고급',
         city: '서울',
         thumbnail: 'https://via.placeholder.com/300',
         introduction: '고급 학습자를 위한 영어 플루언시 향상 그룹입니다.',
         capacity: 20,
-        total_views: 1500,
-        leader_nickname: 'Leader1',
-        leader_profile: 'https://via.placeholder.com/100'
+        totalViews: 1500,
+        leaderNickname: 'Leader1',
+        leaderProfile: 'https://via.placeholder.com/100',
+        isLike: false,
+        likeCount: 33
       },
       {
         id: 1,
         name: '고급 영어 학습 그룹',
-        english_level: '고급',
+        englishLevel: '고급',
         city: '서울',
         thumbnail: 'https://via.placeholder.com/300',
         introduction: '고급 학습자를 위한 영어 플루언시 향상 그룹입니다.',
         capacity: 20,
-        total_views: 1500,
-        leader_nickname: 'Leader1',
-        leader_profile: 'https://via.placeholder.com/100'
+        totalViews: 1500,
+        leaderNickname: 'Leader1',
+        leaderProfile: 'https://via.placeholder.com/100',
+        isLike: false,
+        likeCount: 33
       },
       {
         id: 1,
         name: '고급 영어 학습 그룹',
-        english_level: '고급',
+        englishLevel: '고급',
         city: '서울',
         thumbnail: 'https://via.placeholder.com/300',
         introduction: '고급 학습자를 위한 영어 플루언시 향상 그룹입니다.',
         capacity: 20,
-        total_views: 1500,
-        leader_nickname: 'Leader1',
-        leader_profile: 'https://via.placeholder.com/100'
+        totalViews: 1500,
+        leaderNickname: 'Leader1',
+        leaderProfile: 'https://via.placeholder.com/100',
+        isLike: false,
+        likeCount: 33
       },
       {
         id: 1,
         name: '고급 영어 학습 그룹',
-        english_level: '고급',
+        englishLevel: '고급',
         city: '서울',
         thumbnail: 'https://via.placeholder.com/300',
         introduction: '고급 학습자를 위한 영어 플루언시 향상 그룹입니다.',
         capacity: 20,
-        total_views: 1500,
-        leader_nickname: 'Leader1',
-        leader_profile: 'https://via.placeholder.com/100'
+        totalViews: 1500,
+        leaderNickname: 'Leader1',
+        leaderProfile: 'https://via.placeholder.com/100',
+        isLike: false,
+        likeCount: 33
       },
       {
         id: 1,
         name: '고급 영어 학습 그룹',
-        english_level: '고급',
+        englishLevel: '고급',
         city: '서울',
         thumbnail: 'https://via.placeholder.com/300',
         introduction: '고급 학습자를 위한 영어 플루언시 향상 그룹입니다.',
         capacity: 20,
-        total_views: 1500,
-        leader_nickname: 'Leader1',
-        leader_profile: 'https://via.placeholder.com/100'
+        totalViews: 1500,
+        leaderNickname: 'Leader1',
+        leaderProfile: 'https://via.placeholder.com/100',
+        isLike: false,
+        likeCount: 33
       },
       {
         id: 1,
         name: '고급 영어 학습 그룹',
-        english_level: '고급',
+        englishLevel: '고급',
         city: '서울',
         thumbnail: 'https://via.placeholder.com/300',
         introduction: '고급 학습자를 위한 영어 플루언시 향상 그룹입니다.',
         capacity: 20,
-        total_views: 1500,
-        leader_nickname: 'Leader1',
-        leader_profile: 'https://via.placeholder.com/100'
+        totalViews: 1500,
+        leaderNickname: 'Leader1',
+        leaderProfile: 'https://via.placeholder.com/100',
+        isLike: false,
+        likeCount: 33
       },
       {
         id: 1,
         name: '고급 영어 학습 그룹',
-        english_level: '고급',
+        englishLevel: '고급',
         city: '서울',
         thumbnail: 'https://via.placeholder.com/300',
         introduction: '고급 학습자를 위한 영어 플루언시 향상 그룹입니다.',
         capacity: 20,
-        total_views: 1500,
-        leader_nickname: 'Leader1',
-        leader_profile: 'https://via.placeholder.com/100'
+        totalViews: 1500,
+        leaderNickname: 'Leader1',
+        leaderProfile: 'https://via.placeholder.com/100',
+        isLike: false,
+        likeCount: 33
       },
       {
         id: 1,
         name: '고급 영어 학습 그룹',
-        english_level: '고급',
+        englishLevel: '고급',
         city: '서울',
         thumbnail: 'https://via.placeholder.com/300',
         introduction: '고급 학습자를 위한 영어 플루언시 향상 그룹입니다.',
         capacity: 20,
-        total_views: 1500,
-        leader_nickname: 'Leader1',
-        leader_profile: 'https://via.placeholder.com/100'
+        totalViews: 1500,
+        leaderNickname: 'Leader1',
+        leaderProfile: 'https://via.placeholder.com/100',
+        isLike: false,
+        likeCount: 33
       },
       {
         id: 1,
         name: '고급 영어 학습 그룹',
-        english_level: '고급',
+        englishLevel: '고급',
         city: '서울',
         thumbnail: 'https://via.placeholder.com/300',
         introduction: '고급 학습자를 위한 영어 플루언시 향상 그룹입니다.',
         capacity: 20,
-        total_views: 1500,
-        leader_nickname: 'Leader1',
-        leader_profile: 'https://via.placeholder.com/100'
+        totalViews: 1500,
+        leaderNickname: 'Leader1',
+        leaderProfile: 'https://via.placeholder.com/100',
+        isLike: false,
+        likeCount: 33
       }
-      // ... (다른 그룹들 추가)
     ]
 
     setCircles(testCircles)
   }, [])
 
-  // 필터링된 서클 목록 계산
-  const filteredCircles = circles.filter(circle => {
-    const matchesCity = selectedCity ? circle.city === selectedCity : true
-    const matchesLevel = selectedLevel ? circle.english_level === selectedLevel : true
-    return matchesCity && matchesLevel
-  })
-
-  // 페이지네이션 계산
-  const startIdx = (currentPage - 1) * itemsPerPage
-  const endIdx = startIdx + itemsPerPage
-  const currentItems = filteredCircles.slice(startIdx, endIdx)
-  const totalPages = Math.ceil(filteredCircles.length / itemsPerPage)
-
   return (
     <div className="container mx-auto p-8">
-      <h1 className="text-3xl font-bold text-gray-900 mb-8">서클 목록</h1>
+      <h1 className="text-3xl font-bold text-gray-900 mb-8">영어모임 목록</h1>
 
-      {/* 필터 버튼 */}
       <div className="mb-6 flex justify-end">
         <button
           onClick={() => setIsFilterOpen(!isFilterOpen)}
           className="bg-cyan-600 text-white px-4 py-2 rounded-lg hover:bg-cyan-700 transition duration-300">
           필터 적용
         </button>
+        <button
+          onClick={() => {
+            if (signInResponse) {
+              router.push('/circle/create')
+            } else {
+              setShowLoginModal(true)
+            }
+          }}
+          className="ml-3 bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-lg transition duration-300">
+          영어모임 생성하기
+        </button>
       </div>
 
-      {/* 필터 모달 */}
-      {/* CircleModal 컴포넌트 */}
       <CircleModal
         isOpen={isFilterOpen}
         onClose={() => setIsFilterOpen(false)}
         targetUrl="/filtered-meetings" // 필터 적용 후 라우팅할 URL
       />
 
-      {/* 서클 목록 */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {currentItems.map(circle => (
+        {circles.map(circle => (
           <Circle
             key={circle.id}
             id={circle.id}
             name={circle.name}
-            english_level={circle.english_level}
+            englishLevel={circle.englishLevel}
             city={circle.city}
             thumbnail={circle.thumbnail}
             introduction={circle.introduction}
             capacity={circle.capacity}
-            total_views={circle.total_views}
-            leader_nickname={circle.leader_nickname}
-            leader_profile={circle.leader_profile}
+            totalViews={circle.totalViews}
+            leaderNickname={circle.leaderNickname}
+            leaderProfile={circle.leaderProfile}
+            isLike={circle.isLike}
+            likeCount={circle.likeCount}
           />
         ))}
       </div>
 
       {/* 페이지네이션 */}
-      <div className="mt-8 flex justify-center space-x-4">
-        <button
-          onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-          disabled={currentPage === 1}
-          className="bg-gray-300 px-4 py-2 rounded-lg hover:bg-gray-400">
-          이전
-        </button>
-        <span className="text-lg">
-          {currentPage} / {totalPages}
-        </span>
-        <button
-          onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-          disabled={currentPage === totalPages}
-          className="bg-gray-300 px-4 py-2 rounded-lg hover:bg-gray-400">
-          다음
-        </button>
-      </div>
+      <Pagination
+        currentPage={currentPage} // 현재 페이지
+        totalPages={totalPages} // 전체 페이지 수
+        onPageChange={page => setCurrentPage(page)} // 페이지 변경 핸들러
+      />
+      <LoginModal show={showLoginModal} onClose={() => setShowLoginModal(false)} />
     </div>
   )
 }

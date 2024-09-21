@@ -1,12 +1,14 @@
 export interface CircleInterface {
   id: number
   name: string
-  english_level: string
+  englishLevel: string
   city: string
   thumbnail: string
   introduction: string
   capacity: number
-  total_views: number
-  leader_nickname: string
-  leader_profile: string
+  totalViews: number
+  leaderNickname: string
+  leaderProfile: string
+  isLike: boolean
+  likeCount: number
 }
