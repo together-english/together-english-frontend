@@ -5,6 +5,9 @@ type SignUpDataType = {
   nickname?: string
   phone?: string
   profile?: string
+  isTermsAgreed: boolean
+  isPrivacyAgreed: boolean
+  isMarketingAgreed: boolean
 }
 
 type JwtTokenType = {

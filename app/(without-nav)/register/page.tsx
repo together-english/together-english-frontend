@@ -2,27 +2,46 @@
 import EmailInput from '@/components/input/EmailInput'
 import {useAuth} from '@/contexts'
 import Link from 'next/link'
-import {useRouter} from 'next/navigation'
 import {ChangeEvent, useCallback, useState} from 'react'
 import '../../../styles/globals.css'
 
-type SignUpFormType = Record<
-  'name' | 'nickname' | 'email' | 'password' | 'confirmPassword',
-  string
->
+type SignUpFormType = {
+  name: string
+  nickname: string
+  email: string
+  password: string
+  confirmPassword: string
+  isTermsAgreed: boolean
+  isPrivacyAgreed: boolean
+  isMarketingAgreed: boolean
+}
 
 export default function register() {
   const {signup} = useAuth()
-  const router = useRouter()
-  const [{name, nickname, email, password, confirmPassword}, setForm] =
-    useState<SignUpFormType>({
-      name: '',
-      nickname: '',
-      email: '',
-      password: '',
-      confirmPassword: ''
-    })
+  const [
+    {
+      name,
+      nickname,
+      email,
+      password,
+      confirmPassword,
+      isTermsAgreed,
+      isPrivacyAgreed,
+      isMarketingAgreed
+    },
+    setForm
+  ] = useState<SignUpFormType>({
+    name: '',
+    nickname: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+    isTermsAgreed: false, // 초기값: false
+    isPrivacyAgreed: false, // 초기값: false
+    isMarketingAgreed: false // 초기값: false (선택 항목)
+  })
   const [isEmailValid, setIsEmailValid] = useState<boolean>(false)
+
   const handleEmailChange = (newEmail: string, isValid: boolean) => {
     setForm(prevForm => ({
       ...prevForm,
@@ -38,8 +57,16 @@ export default function register() {
     []
   )
 
+  const handleAgreementChange =
+    (key: keyof SignUpFormType) => (e: ChangeEvent<HTMLInputElement>) => {
+      setForm(prevForm => ({
+        ...prevForm,
+        [key]: e.target.checked
+      }))
+    }
+
   const createAcount = useCallback(() => {
-    console.log(name, email, password, confirmPassword)
+    console.log(name, email, password, confirmPassword, isTermsAgreed, isPrivacyAgreed)
     if (name == '') {
       alert('이름을 입력해주세요')
       return
@@ -60,16 +87,32 @@ export default function register() {
       alert('비밀번호와 확인비밀번호가 틀립니다.')
       return
     }
+    if (!isTermsAgreed || !isPrivacyAgreed) {
+      alert('필수 동의 항목을 모두 체크해주세요.')
+      return
+    }
     signup(
       {
         name: name,
         nickname: nickname,
         email: email,
-        password: password
+        password: password,
+        isTermsAgreed: isTermsAgreed,
+        isPrivacyAgreed: isPrivacyAgreed,
+        isMarketingAgreed: isMarketingAgreed
       },
       undefined
     )
-  }, [email, password, confirmPassword, signup])
+  }, [
+    name,
+    email,
+    password,
+    confirmPassword,
+    isTermsAgreed,
+    isPrivacyAgreed,
+    isMarketingAgreed,
+    signup
+  ])
   return (
     <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
@@ -190,6 +233,42 @@ export default function register() {
                 className="mt-1 appearance-none text-slate-900 bg-white rounded-md block w-full px-3 h-10 shadow-sm sm:text-sm focus:outline-none placeholder:text-slate-400 focus:ring-2 focus:ring-cyan-600 ring-2 ring-slate-300"
               />
             </div>
+          </div>
+
+          <div className="mt-4">
+            <label className="block text-sm font-semibold leading-6 text-gray-900">
+              <input
+                type="checkbox"
+                checked={isTermsAgreed}
+                onChange={handleAgreementChange('isTermsAgreed')}
+                className="mr-2"
+              />
+              [필수] 이용약관에 동의합니다.
+            </label>
+          </div>
+
+          <div className="mt-4">
+            <label className="block text-sm font-semibold leading-6 text-gray-900">
+              <input
+                type="checkbox"
+                checked={isPrivacyAgreed}
+                onChange={handleAgreementChange('isPrivacyAgreed')}
+                className="mr-2"
+              />
+              [필수] 개인정보 처리방침에 동의합니다.
+            </label>
+          </div>
+
+          <div className="mt-4">
+            <label className="block text-sm font-semibold leading-6 text-gray-900">
+              <input
+                type="checkbox"
+                checked={isMarketingAgreed}
+                onChange={handleAgreementChange('isMarketingAgreed')}
+                className="mr-2"
+              />
+              [선택] 마케팅 정보 수신에 동의합니다.
+            </label>
           </div>
 
           <div>

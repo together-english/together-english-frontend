@@ -20,7 +20,7 @@ export default function Login() {
     []
   )
   const router = useRouter()
-  const {login} = useAuth()
+  const {login, logout} = useAuth()
   const loginAccount = useCallback(() => {
     login(email, password, () => router.push('/'))
   }, [email, password, login, router])
@@ -34,6 +34,7 @@ export default function Login() {
       .catch(e => {
         console.log(e)
       })
+    logout()
   }, [])
   return (
     <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
