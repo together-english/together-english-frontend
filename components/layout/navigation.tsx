@@ -21,7 +21,7 @@ const navigation = [
 const userOptions = [
   {name: '내가 찜한 모임', value: 'favoriteGroups'},
   {name: '내가 만든 모임', value: 'myGroups'},
-  {name: '나의 페이지', value: 'mypage'},
+  {name: '마이 페이지', value: 'mypage'},
   {name: '로그아웃', value: 'logout'}
 ]
 
