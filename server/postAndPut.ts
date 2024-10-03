@@ -2,14 +2,18 @@ import {getServerUrl} from './getServerUrl'
 
 const postAndPut =
   (methodName: string) =>
-  async (path: string, data: object, jwt?: string | null | undefined) => {
-    let headers = {'Content-Type': 'application/json'}
+  async (path: string, data: object | FormData, jwt?: string | null | undefined) => {
+    let headers: Record<string, string> = {}
     let init: RequestInit = {
       method: methodName,
-      body: JSON.stringify(data),
+      body: data instanceof FormData ? data : JSON.stringify(data),
       mode: 'cors',
       cache: 'no-cache',
       credentials: 'same-origin'
+    }
+
+    if (!(data instanceof FormData)) {
+      headers['Content-Type'] = 'application/json'
     }
 
     if (jwt) {

@@ -15,12 +15,14 @@ type ContextType = {
   signup: (signUpData: SignUpDataType, callback?: Callback) => void
   login: (email: string, password: string, callback?: Callback) => void
   logout: (callback?: Callback) => void
+  updateProfileImage: (newProfileImageUrl: string) => void
 }
 
 export const AuthContext = createContext<ContextType>({
   signup: (signUpData: SignUpDataType, callback?: Callback) => {},
   login: (email: string, password: string, callback?: Callback) => {},
-  logout: (callback?: Callback) => {}
+  logout: (callback?: Callback) => {},
+  updateProfileImage: (newProfileImageUrl: string) => {}
 })
 
 type AuthProviderProps = {}
@@ -66,6 +68,24 @@ export const AuthProvider: FC<PropsWithChildren<AuthProviderProps>> = ({children
     callback && callback()
   }, [])
 
+  const updateProfileImage = useCallback(
+    (newProfileImageUrl: string) => {
+      if (signInResponse) {
+        const updatedSignInResponse = {
+          ...signInResponse,
+          memberDto: {
+            ...signInResponse.memberDto,
+            profile: newProfileImageUrl // 프로필 이미지 URL 업데이트
+          }
+        }
+
+        setSignInResponse(updatedSignInResponse)
+        U.writeObjectP('signInResponse', updatedSignInResponse)
+      }
+    },
+    [signInResponse]
+  )
+
   useEffect(() => {
     U.readObjectP<SignInResponseType>('signInResponse').then(signInResponse => {
       if (signInResponse) {
@@ -80,7 +100,8 @@ export const AuthProvider: FC<PropsWithChildren<AuthProviderProps>> = ({children
     signInResponse,
     signup,
     login,
-    logout
+    logout,
+    updateProfileImage
   }
   return <AuthContext.Provider value={value} children={children} />
 }

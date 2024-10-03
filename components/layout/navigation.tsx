@@ -90,11 +90,10 @@ export default function Navigation() {
                   <span className="flex items-center">
                     <img
                       src={
-                        signInResponse.memberDto.profile ||
-                        'https://via.placeholder.com/50'
+                        signInResponse.memberDto.profile || 'images/defaultProfile.png'
                       }
                       alt="Profile"
-                      className="h-6 w-6 rounded-full"
+                      className="h-8 w-8 rounded-full border-2 border-cyan-600"
                     />
                     <span className="ml-3 block truncate">
                       {signInResponse.memberDto.nickname}님 반갑습니다

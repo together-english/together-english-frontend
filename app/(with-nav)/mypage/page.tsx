@@ -3,6 +3,9 @@ import {useAuth} from '@/contexts'
 import {useState, useCallback, useEffect, useRef} from 'react'
 import {useRouter} from 'next/navigation'
 import '../../../styles/globals.css'
+import {post} from '@/server'
+import {StatusEnum} from '@/types/status'
+import {SignInResponseType} from '@/types/auth'
 
 type UserProfileType = {
   name: string
@@ -16,8 +19,7 @@ type UserProfileType = {
 }
 
 export default function MyPage() {
-  const {signInResponse} = useAuth()
-  const router = useRouter()
+  const {signInResponse, updateProfileImage} = useAuth()
 
   const [profile, setProfile] = useState<UserProfileType>({
     name: signInResponse?.memberDto?.name || '',
@@ -62,10 +64,23 @@ export default function MyPage() {
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0]
       if (file) {
+        const formData = new FormData()
         const reader = new FileReader()
+        formData.append('file', file)
         reader.onload = () => {
           setPreviewImage(reader.result as string) // 미리보기 이미지 설정
         }
+
+        post('/member/profile', formData, signInResponse?.jwtToken.accessToken)
+          .then(res => res.json())
+          .then((result: {status: string; data?: string; message: string}) => {
+            if (result.status === StatusEnum.SUCCESS && result.data) {
+              updateProfileImage(result.data)
+            } else {
+              alert(result.message)
+            }
+          })
+
         reader.readAsDataURL(file)
 
         setProfile(prevProfile => ({
