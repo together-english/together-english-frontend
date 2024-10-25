@@ -1,4 +1,4 @@
-type SignUpDataType = {
+type TSignUpData = {
   name: string
   email: string
   password: string
@@ -10,12 +10,12 @@ type SignUpDataType = {
   isMarketingAgreed: boolean
 }
 
-type JwtTokenType = {
+type TJwtToken = {
   accessToken: string
   refreshToken: string
 }
 
-type MemberDtoType = {
+type TMemberDto = {
   id: number
   name: string
   email: string
@@ -23,9 +23,9 @@ type MemberDtoType = {
   profile: string
 }
 
-type SignInResponseType = {
-  memberDto: MemberDtoType
-  jwtToken: JwtTokenType
+type TSignInResponse = {
+  memberDto: TMemberDto
+  jwtToken: TJwtToken
 }
 
-export type {JwtTokenType, SignInResponseType, SignUpDataType}
+export type {TJwtToken, TSignInResponse, TSignUpData}

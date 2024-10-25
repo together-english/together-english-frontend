@@ -1,4 +1,6 @@
+import {TSignInResponse} from '@/types/auth'
 import {getServerUrl} from './getServerUrl'
+import * as U from '@/utils'
 
 const postAndPut =
   (methodName: string) =>
@@ -31,3 +33,23 @@ const postAndPut =
   }
 export const post = postAndPut('POST')
 export const put = postAndPut('PUT')
+
+const getJwtFromLocalStorage = async (): Promise<string | null | undefined> => {
+  try {
+    const signInResponse = await U.readObjectP<TSignInResponse>('signInResponse')
+    return signInResponse?.jwtToken.accessToken
+  } catch (e) {
+    console.log(e)
+    return null
+  }
+}
+
+export const postWithJwt = async (path: string, data: object | FormData) => {
+  const jwt = await getJwtFromLocalStorage()
+  return post(path, data, jwt)
+}
+
+export const putWithJwt = async (path: string, data: object | FormData) => {
+  const jwt = await getJwtFromLocalStorage()
+  return put(path, data, jwt)
+}

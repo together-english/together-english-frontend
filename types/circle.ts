@@ -1,4 +1,4 @@
-export interface CircleInterface {
+type TCircle = {
   id: number
   name: string
   englishLevel: string
@@ -12,3 +12,5 @@ export interface CircleInterface {
   isLike: boolean
   likeCount: number
 }
+
+export type {TCircle}

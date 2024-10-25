@@ -1,9 +1,9 @@
 import React, {useState} from 'react'
-import {CircleInterface} from '@/types/circleInterface'
+import {TCircle} from '@/types/circle'
 import {useAuth} from '@/contexts'
 import LoginModal from './modal/LoginModal'
 
-const Circle: React.FC<CircleInterface> = ({
+const Circle: React.FC<TCircle> = ({
   id,
   name,
   englishLevel,

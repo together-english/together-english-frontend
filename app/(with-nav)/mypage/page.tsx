@@ -1,35 +1,25 @@
 'use client'
 import {useAuth} from '@/contexts'
 import {useState, useCallback, useEffect, useRef} from 'react'
-import {useRouter} from 'next/navigation'
 import '../../../styles/globals.css'
-import {post} from '@/server'
+import {get, getWithJwt, post, postWithJwt} from '@/server'
 import {StatusEnum} from '@/types/status'
-import {SignInResponseType} from '@/types/auth'
-
-type UserProfileType = {
-  name: string
-  nickname: string
-  email: string
-  password: string
-  newPassword: string
-  confirmNewPassword: string
-  profileImage?: string // 프로필 이미지 필드 추가
-  isMarketingAgreed: boolean // 마케팅 수신 동의 상태 추가
-}
+import {TSignInResponse, TSignUpData} from '@/types/auth'
+import {TMyPageResponse, TUserProfile} from '@/types/myPage'
+import * as U from '@/utils'
 
 export default function MyPage() {
-  const {signInResponse, updateProfileImage} = useAuth()
+  const {updateProfileImage} = useAuth()
 
-  const [profile, setProfile] = useState<UserProfileType>({
-    name: signInResponse?.memberDto?.name || '',
-    nickname: signInResponse?.memberDto?.nickname || '',
-    email: signInResponse?.memberDto?.email || '',
+  const [profile, setProfile] = useState<TUserProfile>({
+    name: '',
+    nickname: '',
+    email: '',
     password: '',
     newPassword: '',
     confirmNewPassword: '',
-    profileImage: signInResponse?.memberDto?.profile || '', // 프로필 이미지 초기화
-    isMarketingAgreed: false // 마케팅 수신 동의 초기화
+    profileImage: '',
+    isMarketingAgreed: false
   })
 
   const [previewImage, setPreviewImage] = useState<string | null>(null)
@@ -38,18 +28,24 @@ export default function MyPage() {
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
-    if (!profile) {
-      setProfile({
-        name: '',
-        nickname: '',
-        email: '',
-        password: '',
-        newPassword: '',
-        confirmNewPassword: '',
-        profileImage: '', // 빈 문자열로 초기화
-        isMarketingAgreed: false // 기본값 false
+    getWithJwt('/member/my')
+      .then(res => res.json())
+      .then((result: {status: string; data?: TMyPageResponse; message: string}) => {
+        if (result.status === StatusEnum.SUCCESS && result.data) {
+          setProfile({
+            name: result.data.name,
+            nickname: result.data.nickname,
+            email: result.data.email,
+            password: '',
+            newPassword: '',
+            confirmNewPassword: '',
+            profileImage: result.data.profile,
+            isMarketingAgreed: result.data.isMarketingAgreed
+          })
+        } else {
+          alert(result.message)
+        }
       })
-    }
   }, [])
 
   const changed = useCallback(
@@ -71,7 +67,7 @@ export default function MyPage() {
           setPreviewImage(reader.result as string) // 미리보기 이미지 설정
         }
 
-        post('/member/profile', formData, signInResponse?.jwtToken.accessToken)
+        postWithJwt('/member/profile', formData)
           .then(res => res.json())
           .then((result: {status: string; data?: string; message: string}) => {
             if (result.status === StatusEnum.SUCCESS && result.data) {
@@ -108,24 +104,32 @@ export default function MyPage() {
     []
   )
 
-  const handleUpdateProfile = useCallback(() => {
-    const {name, nickname, password, newPassword, confirmNewPassword, isMarketingAgreed} =
+  const updateMyInfo = useCallback(() => {
+    const {name, nickname, newPassword, password, confirmNewPassword, isMarketingAgreed} =
       profile
-
     if (!name || !nickname) {
       alert('모든 필수 정보를 입력해주세요.')
       return
     }
-
     if (newPassword !== confirmNewPassword) {
       alert('새 비밀번호와 비밀번호 확인이 일치하지 않습니다.')
       return
     }
-
-    // 여기에 프로필 이미지와 함께 서버로 업데이트 요청을 보내는 로직 추가
-    // 예시: updateUserProfile(profile)
-
-    alert(`프로필이 성공적으로 업데이트되었습니다. 마케팅 동의: ${isMarketingAgreed}`)
+    postWithJwt('/member/my', {
+      name: name,
+      nickname: nickname,
+      currentPassword: password,
+      newPassword: newPassword,
+      isMarketingAgreed: isMarketingAgreed
+    })
+      .then(res => res.json())
+      .then((result: {status: string; message: string}) => {
+        if (result.status === StatusEnum.SUCCESS) {
+          alert('프로필이 성공적으로 업데이트되었습니다.')
+        } else {
+          alert(result.message)
+        }
+      })
   }, [profile])
 
   return (
@@ -186,13 +190,13 @@ export default function MyPage() {
 
           <div>
             <label
-              htmlFor="nickname"
+              htmlFor="nick"
               className="block text-sm font-semibold leading-6 text-gray-900">
               닉네임
             </label>
             <div className="mt-1">
               <input
-                id="nickname"
+                id="nick"
                 type="text"
                 value={profile.nickname || ''} // 빈 문자열 기본값
                 onChange={changed('nickname')}
@@ -289,7 +293,7 @@ export default function MyPage() {
             <button
               type="button"
               className="block w-full text-center bg-cyan-600 text-white rounded-lg px-3 py-2 text-base font-semibold hover:bg-cyan-700"
-              onClick={handleUpdateProfile}>
+              onClick={updateMyInfo}>
               프로필 업데이트
             </button>
           </div>

@@ -1,4 +1,6 @@
+import {TSignInResponse} from '@/types/auth'
 import {getServerUrl} from './getServerUrl'
+import * as U from '@/utils'
 
 const getAndDel =
   (methodName: string, jwt?: string | null | undefined) =>
@@ -24,3 +26,23 @@ const getAndDel =
 
 export const get = getAndDel('GET')
 export const del = getAndDel('DELETE')
+
+const getJwtFromLocalStorage = async (): Promise<string | null | undefined> => {
+  try {
+    const signInResponse = await U.readObjectP<TSignInResponse>('signInResponse')
+    return signInResponse?.jwtToken.accessToken
+  } catch (e) {
+    console.log(e)
+    return null
+  }
+}
+
+export const getWithJwt = async (path: string) => {
+  const jwt = await getJwtFromLocalStorage()
+  return get(path, jwt)
+}
+
+export const delWithJwt = async (path: string) => {
+  const jwt = await getJwtFromLocalStorage()
+  return del(path, jwt)
+}

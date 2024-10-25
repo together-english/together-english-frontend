@@ -3,7 +3,7 @@ import {NextPage} from 'next'
 import {useState, useEffect} from 'react'
 import CircleModal from '@/components/modal/CircleModal'
 import Circle from '@/components/Circle'
-import {CircleInterface} from '@/types/circleInterface'
+import {TCircle} from '@/types/circle'
 import Pagination from '@/components/Pagination'
 import {useRouter} from 'next/navigation'
 import {useAuth} from '@/contexts'
@@ -12,7 +12,7 @@ import LoginModal from '@/components/modal/LoginModal'
 const CircleListPage: NextPage = () => {
   const router = useRouter()
   const {signInResponse} = useAuth()
-  const [circles, setCircles] = useState<CircleInterface[]>([])
+  const [circles, setCircles] = useState<TCircle[]>([])
   const [currentPage, setCurrentPage] = useState<number>(1)
   const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false)
   const [showLoginModal, setShowLoginModal] = useState(false)
@@ -20,7 +20,7 @@ const CircleListPage: NextPage = () => {
 
   useEffect(() => {
     // 테스트 데이터를 로컬에서 설정
-    const testCircles: CircleInterface[] = [
+    const testCircles: TCircle[] = [
       {
         id: 1,
         name: '고급 영어 학습 그룹',

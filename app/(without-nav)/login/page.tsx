@@ -6,7 +6,7 @@ import '../../../styles/globals.css'
 import {useAuth} from '@/contexts'
 import {useRouter} from 'next/navigation'
 import * as U from '@/utils'
-import {SignUpDataType} from '@/types/auth'
+import {TSignUpData} from '@/types/auth'
 
 type LoginFormType = Record<'email' | 'password', string>
 const initialFormState = {email: '', password: ''}
@@ -26,7 +26,7 @@ export default function Login() {
   }, [email, password, login, router])
 
   useEffect(() => {
-    U.readObjectP<SignUpDataType>('signInResponse')
+    U.readObjectP<TSignUpData>('signInResponse')
       .then(signInResponse => {
         if (signInResponse)
           setForm({email: signInResponse.email, password: signInResponse.password})
