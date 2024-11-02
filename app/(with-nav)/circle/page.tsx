@@ -4,10 +4,13 @@ import {useState, useEffect} from 'react'
 import CircleModal from '@/components/modal/CircleModal'
 import Circle from '@/components/Circle'
 import {TCircle} from '@/types/circle'
+import {TApiResponse, TPaginatedData} from '@/types/common'
 import Pagination from '@/components/Pagination'
 import {useRouter} from 'next/navigation'
 import {useAuth} from '@/contexts'
 import LoginModal from '@/components/modal/LoginModal'
+import {get} from '@/server'
+import {StatusEnum} from '@/types/status'
 
 const CircleListPage: NextPage = () => {
   const router = useRouter()
@@ -19,137 +22,21 @@ const CircleListPage: NextPage = () => {
   const totalPages = 20
 
   useEffect(() => {
-    // 테스트 데이터를 로컬에서 설정
-    const testCircles: TCircle[] = [
-      {
-        id: 1,
-        name: '고급 영어 학습 그룹',
-        englishLevel: '고급',
-        city: '서울',
-        thumbnail: 'https://via.placeholder.com/300',
-        introduction: '고급 학습자를 위한 영어 플루언시 향상 그룹입니다.',
-        capacity: 20,
-        totalViews: 1500,
-        leaderNickname: 'Leader1',
-        leaderProfile: 'https://via.placeholder.com/100',
-        isLike: false,
-        likeCount: 33
-      },
-      {
-        id: 1,
-        name: '고급 영어 학습 그룹',
-        englishLevel: '고급',
-        city: '서울',
-        thumbnail: 'https://via.placeholder.com/300',
-        introduction: '고급 학습자를 위한 영어 플루언시 향상 그룹입니다.',
-        capacity: 20,
-        totalViews: 1500,
-        leaderNickname: 'Leader1',
-        leaderProfile: 'https://via.placeholder.com/100',
-        isLike: false,
-        likeCount: 33
-      },
-      {
-        id: 1,
-        name: '고급 영어 학습 그룹',
-        englishLevel: '고급',
-        city: '서울',
-        thumbnail: 'https://via.placeholder.com/300',
-        introduction: '고급 학습자를 위한 영어 플루언시 향상 그룹입니다.',
-        capacity: 20,
-        totalViews: 1500,
-        leaderNickname: 'Leader1',
-        leaderProfile: 'https://via.placeholder.com/100',
-        isLike: false,
-        likeCount: 33
-      },
-      {
-        id: 1,
-        name: '고급 영어 학습 그룹',
-        englishLevel: '고급',
-        city: '서울',
-        thumbnail: 'https://via.placeholder.com/300',
-        introduction: '고급 학습자를 위한 영어 플루언시 향상 그룹입니다.',
-        capacity: 20,
-        totalViews: 1500,
-        leaderNickname: 'Leader1',
-        leaderProfile: 'https://via.placeholder.com/100',
-        isLike: false,
-        likeCount: 33
-      },
-      {
-        id: 1,
-        name: '고급 영어 학습 그룹',
-        englishLevel: '고급',
-        city: '서울',
-        thumbnail: 'https://via.placeholder.com/300',
-        introduction: '고급 학습자를 위한 영어 플루언시 향상 그룹입니다.',
-        capacity: 20,
-        totalViews: 1500,
-        leaderNickname: 'Leader1',
-        leaderProfile: 'https://via.placeholder.com/100',
-        isLike: false,
-        likeCount: 33
-      },
-      {
-        id: 1,
-        name: '고급 영어 학습 그룹',
-        englishLevel: '고급',
-        city: '서울',
-        thumbnail: 'https://via.placeholder.com/300',
-        introduction: '고급 학습자를 위한 영어 플루언시 향상 그룹입니다.',
-        capacity: 20,
-        totalViews: 1500,
-        leaderNickname: 'Leader1',
-        leaderProfile: 'https://via.placeholder.com/100',
-        isLike: false,
-        likeCount: 33
-      },
-      {
-        id: 1,
-        name: '고급 영어 학습 그룹',
-        englishLevel: '고급',
-        city: '서울',
-        thumbnail: 'https://via.placeholder.com/300',
-        introduction: '고급 학습자를 위한 영어 플루언시 향상 그룹입니다.',
-        capacity: 20,
-        totalViews: 1500,
-        leaderNickname: 'Leader1',
-        leaderProfile: 'https://via.placeholder.com/100',
-        isLike: false,
-        likeCount: 33
-      },
-      {
-        id: 1,
-        name: '고급 영어 학습 그룹',
-        englishLevel: '고급',
-        city: '서울',
-        thumbnail: 'https://via.placeholder.com/300',
-        introduction: '고급 학습자를 위한 영어 플루언시 향상 그룹입니다.',
-        capacity: 20,
-        totalViews: 1500,
-        leaderNickname: 'Leader1',
-        leaderProfile: 'https://via.placeholder.com/100',
-        isLike: false,
-        likeCount: 33
-      },
-      {
-        id: 1,
-        name: '고급 영어 학습 그룹',
-        englishLevel: '고급',
-        city: '서울',
-        thumbnail: 'https://via.placeholder.com/300',
-        introduction: '고급 학습자를 위한 영어 플루언시 향상 그룹입니다.',
-        capacity: 20,
-        totalViews: 1500,
-        leaderNickname: 'Leader1',
-        leaderProfile: 'https://via.placeholder.com/100',
-        isLike: false,
-        likeCount: 33
-      }
-    ]
-
-    setCircles(testCircles)
+    if (signInResponse) {
+      // todo: 내가 좋아요 누른 정보도 포함한 API 호출
+    } else {
+      get('/circle')
+        .then(res => res.json())
+        .then((result: TApiResponse<TPaginatedData<TCircle>>) => {
+          if (result.status === StatusEnum.SUCCESS && result.data) {
+            if (result.data.content) {
+              setCircles(result.data.content)
+            }
+          } else {
+            // todo: 에러 처리
+          }
+        })
+    }
   }, [])
 
   return (
