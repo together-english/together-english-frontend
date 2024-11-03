@@ -19,7 +19,7 @@ const CircleListPage: NextPage = () => {
   const [currentPage, setCurrentPage] = useState<number>(1)
   const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false)
   const [showLoginModal, setShowLoginModal] = useState(false)
-  const totalPages = 20
+  const [totalPages, setTotalPages] = useState<number>(1)
 
   useEffect(() => {
     if (signInResponse) {
@@ -31,6 +31,7 @@ const CircleListPage: NextPage = () => {
           if (result.status === StatusEnum.SUCCESS && result.data) {
             if (result.data.content) {
               setCircles(result.data.content)
+              setTotalPages(result.data.totalPages)
             }
           } else {
             // todo: 에러 처리
@@ -76,18 +77,17 @@ const CircleListPage: NextPage = () => {
             name={circle.name}
             englishLevel={circle.englishLevel}
             city={circle.city}
-            thumbnail={circle.thumbnail}
+            thumbnailUrl={circle.thumbnailUrl || 'https://via.placeholder.com/300'}
             introduction={circle.introduction}
             capacity={circle.capacity}
-            totalViews={circle.totalViews}
-            leaderNickname={circle.leaderNickname}
+            totalView={circle.totalView || 0}
+            leaderName={circle.leaderName}
             leaderProfile={circle.leaderProfile}
-            isLike={circle.isLike}
-            likeCount={circle.likeCount}
+            likedByMe={circle.likedByMe}
+            totalLike={circle.totalLike || 0}
           />
         ))}
       </div>
-
       {/* 페이지네이션 */}
       <Pagination
         currentPage={currentPage} // 현재 페이지

@@ -8,14 +8,14 @@ const Circle: React.FC<TCircle> = ({
   name,
   englishLevel,
   city,
-  thumbnail,
+  thumbnailUrl: thumbnail,
   introduction,
   capacity,
-  totalViews,
-  leaderNickname,
+  totalView: totalViews,
+  leaderName: leaderNickname,
   leaderProfile,
-  isLike,
-  likeCount
+  likedByMe: isLike,
+  totalLike: likeCount
 }) => {
   const [isLiked, setIsLiked] = useState(isLike)
   const {signInResponse} = useAuth()

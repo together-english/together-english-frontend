@@ -3,14 +3,14 @@ type TCircle = {
   name: string
   englishLevel: string
   city: string
-  thumbnail: string
+  thumbnailUrl: string
   introduction: string
   capacity: number
-  totalViews: number
-  leaderNickname: string
+  totalView: number
+  leaderName: string
   leaderProfile: string
-  isLike: boolean
-  likeCount: number
+  likedByMe: boolean
+  totalLike: number
 }
 
 export type {TCircle}

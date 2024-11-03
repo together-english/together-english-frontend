@@ -13,7 +13,7 @@ type Pageable = {
   paged: boolean
 }
 
-type PaginatedData<T> = {
+type TPaginatedData<T> = {
   totalPages: number
   totalElements: number
   size: number
@@ -27,8 +27,10 @@ type PaginatedData<T> = {
   empty: boolean
 }
 
-type ApiResponse<T> = {
+type TApiResponse<T> = {
   status: string
   message: string
   data: T
 }
+
+export type {TPaginatedData, TApiResponse}
