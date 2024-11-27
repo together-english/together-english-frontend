@@ -23,7 +23,19 @@ const CircleListPage: NextPage = () => {
 
   useEffect(() => {
     if (signInResponse) {
-      // todo: 내가 좋아요 누른 정보도 포함한 API 호출
+      // todo: 내가 좋아요 누른 정보도 포함한 API 호출 하도록 변경 필요
+      get('/circle')
+        .then(res => res.json())
+        .then((result: TApiResponse<TPaginatedData<TCircle>>) => {
+          if (result.status === StatusEnum.SUCCESS && result.data) {
+            if (result.data.content) {
+              setCircles(result.data.content)
+              setTotalPages(result.data.totalPages)
+            }
+          } else {
+            // todo: 에러 처리
+          }
+        })
     } else {
       get('/circle')
         .then(res => res.json())
@@ -38,7 +50,7 @@ const CircleListPage: NextPage = () => {
           }
         })
     }
-  }, [])
+  }, [signInResponse])
 
   return (
     <div className="container mx-auto p-8">
@@ -77,7 +89,7 @@ const CircleListPage: NextPage = () => {
             name={circle.name}
             englishLevel={circle.englishLevel}
             city={circle.city}
-            thumbnailUrl={circle.thumbnailUrl || 'https://via.placeholder.com/300'}
+            thumbnailUrl={circle.thumbnailUrl}
             introduction={circle.introduction}
             capacity={circle.capacity}
             totalView={circle.totalView || 0}

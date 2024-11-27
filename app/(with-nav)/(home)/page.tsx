@@ -86,24 +86,24 @@ export default function Home() {
             {/* Review 1 */}
             <div className="bg-gray-100 p-6 rounded-lg shadow-lg">
               <p className="text-black mb-4">
-                "English Together는 제 영어 학습에 큰 도움이 되었습니다. 지역 카페에서
-                새로운 친구들과 공부하는 것은 정말 재미있어요!"
+                English Together는 제 영어 학습에 큰 도움이 되었습니다. 지역 카페에서
+                새로운 친구들과 공부하는 것은 정말 재미있어요!
               </p>
               <p className="font-semibold text-black">- 김지민</p>
             </div>
             {/* Review 2 */}
             <div className="bg-gray-100 p-6 rounded-lg shadow-lg">
               <p className="text-black mb-4">
-                "다양한 수준의 학습자와 연결되어 영어 실력을 빠르게 향상시킬 수 있었어요.
-                추천합니다!"
+                다양한 수준의 학습자와 연결되어 영어 실력을 빠르게 향상시킬 수 있었어요.
+                추천합니다!
               </p>
               <p className="font-semibold text-black">- 이수영</p>
             </div>
             {/* Review 3 */}
             <div className="bg-gray-100 p-6 rounded-lg shadow-lg">
               <p className="text-black mb-4">
-                "사용하기 쉬운 플랫폼으로, 영어 학습에 필요한 모든 것이 다 있어요. 특히
-                카페에서 만나는 것이 좋습니다."
+                사용하기 쉬운 플랫폼으로, 영어 학습에 필요한 모든 것이 다 있어요. 특히
+                카페에서 만나는 것이 좋습니다.
               </p>
               <p className="font-semibold text-black">- 박민수</p>
             </div>

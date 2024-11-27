@@ -16,7 +16,7 @@ type SignUpFormType = {
   isMarketingAgreed: boolean
 }
 
-export default function register() {
+export default function Register() {
   const {signup} = useAuth()
   const [
     {
@@ -107,6 +107,8 @@ export default function register() {
     name,
     email,
     password,
+    isEmailValid,
+    nickname,
     confirmPassword,
     isTermsAgreed,
     isPrivacyAgreed,

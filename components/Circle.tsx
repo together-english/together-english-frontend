@@ -2,6 +2,7 @@ import React, {useState} from 'react'
 import {TCircle} from '@/types/circle'
 import {useAuth} from '@/contexts'
 import LoginModal from './modal/LoginModal'
+import Image from 'next/image'
 
 const Circle: React.FC<TCircle> = ({
   id,
@@ -33,20 +34,29 @@ const Circle: React.FC<TCircle> = ({
     <div
       key={id}
       className="bg-white shadow-2xl rounded-lg overflow-hidden hover:shadow-3xl transition-shadow duration-300 ease-in-out">
-      <img className="h-48 w-full object-cover" src={thumbnail} alt={name} />
+      {/* Next.js Image 컴포넌트 수정 */}
+      <div className="relative w-full h-[250px]">
+        <Image
+          src={thumbnail || '/images/defaultImage.png'}
+          alt={name}
+          fill
+          style={{objectFit: 'cover'}} // className 대신 스타일 지정
+        />
+      </div>
       <div className="p-6">
         <h3 className="text-2xl font-bold text-gray-800">{name}</h3>
         <p className="text-gray-600 mt-2">{introduction}</p>
         <div className="mt-4 flex items-center">
-          {/* 프로필 사진 크기를 키움 */}
-          <img
-            className="w-16 h-16 rounded-full"
+          {/* 리더 프로필 이미지 */}
+          <Image
             src={leaderProfile}
             alt={leaderNickname}
+            width={64}
+            height={64}
+            className="rounded-full"
           />
           <div className="ml-3">
             <p className="text-sm text-gray-700 font-medium">리더: {leaderNickname}</p>
-            {/* 레벨과 지역을 한 줄로 배치 */}
             <p className="text-sm text-gray-500">
               레벨: {englishLevel} | 지역: {city}
             </p>
@@ -88,6 +98,7 @@ const Circle: React.FC<TCircle> = ({
           모임 자세히보기
         </button>
       </div>
+      {/* 로그인 모달 */}
       <LoginModal show={showLoginModal} onClose={() => setShowLoginModal(false)} />
     </div>
   )

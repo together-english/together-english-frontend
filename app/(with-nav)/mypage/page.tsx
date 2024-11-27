@@ -7,6 +7,7 @@ import {StatusEnum} from '@/types/status'
 import {TSignInResponse, TSignUpData} from '@/types/auth'
 import {TMyPageResponse, TUserProfile} from '@/types/myPage'
 import * as U from '@/utils'
+import Image from 'next/image'
 
 export default function MyPage() {
   const {updateProfileImage} = useAuth()
@@ -85,7 +86,7 @@ export default function MyPage() {
         }))
       }
     },
-    []
+    [updateProfileImage]
   )
 
   // 이미지 클릭 시 파일 선택 창 열기
@@ -150,7 +151,7 @@ export default function MyPage() {
             </label>
             <div className="mt-2 flex justify-center">
               <div className="mt-2 flex justify-center">
-                <img
+                <Image
                   src={
                     previewImage || profile.profileImage || '/images/defaultProfile.png'
                   }

@@ -1,5 +1,6 @@
 'use client'
 import {NextPage} from 'next'
+import Image from 'next/image'
 import {useState, useEffect} from 'react'
 
 interface Circle {
@@ -56,7 +57,7 @@ const CircleDetailPage: NextPage = () => {
       <div className="max-w-4xl mx-auto">
         {/* 서클 카드 */}
         <div className="bg-white shadow-xl rounded-lg overflow-hidden">
-          <img
+          <Image
             className="w-full h-64 object-cover"
             src={circle.thumbnail}
             alt={circle.name}
@@ -64,7 +65,7 @@ const CircleDetailPage: NextPage = () => {
           <div className="p-6">
             {/* 서클 제목 및 리더 */}
             <div className="flex items-center">
-              <img
+              <Image
                 className="w-16 h-16 rounded-full mr-4"
                 src={circle.leader_profile}
                 alt={circle.leader_nickname}
