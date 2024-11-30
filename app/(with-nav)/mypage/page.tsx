@@ -155,6 +155,8 @@ export default function MyPage() {
                   src={
                     previewImage || profile.profileImage || '/images/defaultProfile.png'
                   }
+                  width={150}
+                  height={150}
                   alt="프로필 미리보기"
                   onClick={handleImageClick} // 이미지 클릭 시 파일 선택 창 열기
                   className="w-48 h-48 rounded-full border-2 border-cyan-600 cursor-pointer"
