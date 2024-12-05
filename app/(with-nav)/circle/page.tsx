@@ -9,7 +9,7 @@ import Pagination from '@/components/Pagination'
 import {useRouter} from 'next/navigation'
 import {useAuth} from '@/contexts'
 import LoginModal from '@/components/modal/LoginModal'
-import {get} from '@/server'
+import {post} from '@/server'
 import {StatusEnum} from '@/types/status'
 
 const CircleListPage: NextPage = () => {
@@ -24,7 +24,7 @@ const CircleListPage: NextPage = () => {
   useEffect(() => {
     if (signInResponse) {
       // todo: 내가 좋아요 누른 정보도 포함한 API 호출 하도록 변경 필요
-      get('/circle')
+      post('/circle/list', {})
         .then(res => res.json())
         .then((result: TApiResponse<TPaginatedData<TCircle>>) => {
           if (result.status === StatusEnum.SUCCESS && result.data) {
@@ -37,7 +37,7 @@ const CircleListPage: NextPage = () => {
           }
         })
     } else {
-      get('/circle')
+      post('/circle/list', {})
         .then(res => res.json())
         .then((result: TApiResponse<TPaginatedData<TCircle>>) => {
           if (result.status === StatusEnum.SUCCESS && result.data) {

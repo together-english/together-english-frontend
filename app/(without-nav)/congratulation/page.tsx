@@ -2,7 +2,7 @@
 import {NextPage} from 'next'
 import {useRouter} from 'next/navigation'
 
-const TossStyleCongratulationsPage: NextPage = () => {
+const CongratulationsPage: NextPage = () => {
   const router = useRouter()
 
   const handleGoToLogin = () => {
@@ -50,4 +50,4 @@ const TossStyleCongratulationsPage: NextPage = () => {
   )
 }
 
-export default TossStyleCongratulationsPage
+export default CongratulationsPage

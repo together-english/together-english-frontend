@@ -3,6 +3,7 @@ import {TCircle} from '@/types/circle'
 import {useAuth} from '@/contexts'
 import LoginModal from './modal/LoginModal'
 import Image from 'next/image'
+import {useRouter} from 'next/navigation'
 
 const Circle: React.FC<TCircle> = ({
   id,
@@ -21,6 +22,7 @@ const Circle: React.FC<TCircle> = ({
   const [isLiked, setIsLiked] = useState(isLike)
   const {signInResponse} = useAuth()
   const [showLoginModal, setShowLoginModal] = useState(false)
+  const router = useRouter()
 
   const handleLikeClick = () => {
     if (signInResponse) {
@@ -28,6 +30,10 @@ const Circle: React.FC<TCircle> = ({
     } else {
       setShowLoginModal(true)
     }
+  }
+
+  const handleViewDetails = () => {
+    router.push(`/circle/${id}`)
   }
 
   return (
@@ -94,7 +100,9 @@ const Circle: React.FC<TCircle> = ({
             )}
           </button>
         </div>
-        <button className="mt-6 w-full bg-cyan-600 text-white py-2 rounded-lg hover:bg-cyan-700 transition duration-300">
+        <button
+          onClick={handleViewDetails}
+          className="mt-6 w-full bg-cyan-600 text-white py-2 rounded-lg hover:bg-cyan-700 transition duration-300">
           모임 자세히보기
         </button>
       </div>
