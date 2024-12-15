@@ -2,6 +2,10 @@
 import {NextPage} from 'next'
 import {useState} from 'react'
 import {Transition} from '@headlessui/react'
+import InputField from '@/components/input/InputField'
+import Button from '@/components/button/Button'
+import {useSearchParams} from 'next/navigation'
+import ErrorModal from '@/components/modal/ErrorModal'
 
 interface CircleForm {
   name: string
@@ -16,6 +20,8 @@ interface CircleForm {
 }
 
 const CircleCreatePage: NextPage = () => {
+  const searchParams = useSearchParams()
+  const circleId = searchParams.get('circleId')
   const [formData, setFormData] = useState<CircleForm>({
     name: '',
     english_level: '',
@@ -28,7 +34,14 @@ const CircleCreatePage: NextPage = () => {
     contact_way: ''
   })
 
+  const [showErrorModal, setShowErrorModal] = useState<boolean>(false)
+  const [errorMessage, setErrorMessage] = useState<string>('')
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false)
+
+  const handleError = (message: string) => {
+    setErrorMessage(message)
+    setShowErrorModal(true)
+  }
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -40,49 +53,52 @@ const CircleCreatePage: NextPage = () => {
     }))
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    // 서클 생성 로직 (API 호출)
-    console.log('서클 정보 제출됨:', formData)
+  const handleSubmit = () => {
+    console.log('영어 모임 정보 제출됨:', formData)
+    if (!formData.name) {
+      handleError('영어 모임 이름을 입력해주세요')
+    }
   }
 
   const handleDeleteCircle = () => {
-    // 서클 삭제 로직 (API 호출)
-    console.log('서클 삭제됨')
+    console.log('영어 모임 삭제됨')
     setIsDeleteModalOpen(false)
   }
+  const commonLabelClasses = 'block text-sm font-semibold leading-6 text-gray-900'
+  const commonInputClasses =
+    'mt-1 w-full p-3 border rounded-md shadow-sm text-gray-900 bg-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-600 focus-visible:ring-2 focus-visible:ring-cyan-600 ring-2 ring-gray-300'
 
   return (
     <div className="container mx-auto p-8">
       <div className="max-w-4xl mx-auto">
-        {/* 서클 생성 카드 */}
         <div className="bg-white shadow-xl rounded-lg p-6">
-          <h1 className="text-3xl font-bold text-gray-800 mb-6">서클 생성 및 관리</h1>
+          <ErrorModal
+            show={showErrorModal}
+            onClose={() => setShowErrorModal(false)}
+            message={errorMessage}
+          />
 
-          {/* 서클 생성 폼 */}
+          <h1 className="text-3xl font-bold text-gray-800 mb-6">
+            영어 모임 생성 및 관리
+          </h1>
+
           <form onSubmit={handleSubmit}>
-            {/* 서클 이름 */}
+            {/* 영어 모임 이름 */}
             <div className="mb-4">
-              <label htmlFor="name" className="block text-lg font-medium text-gray-700">
-                서클 이름
-              </label>
-              <input
-                type="text"
+              <InputField
                 id="name"
-                name="name"
+                label="영어 모임 이름"
+                type="text"
                 value={formData.name}
                 onChange={handleInputChange}
-                className="mt-1 w-full p-3 border border-gray-300 rounded-lg"
-                placeholder="서클 이름을 입력하세요"
                 required
+                placeholder="영어 모임 이름을 입력하세요"
               />
             </div>
 
             {/* 영어 레벨 */}
             <div className="mb-4">
-              <label
-                htmlFor="english_level"
-                className="block text-lg font-medium text-gray-700">
+              <label htmlFor="english_level" className={commonLabelClasses}>
                 영어 레벨
               </label>
               <select
@@ -90,7 +106,7 @@ const CircleCreatePage: NextPage = () => {
                 name="english_level"
                 value={formData.english_level}
                 onChange={handleInputChange}
-                className="mt-1 w-full p-3 border border-gray-300 rounded-lg"
+                className={commonInputClasses}
                 required>
                 <option value="">레벨 선택</option>
                 <option value="Beginner">초급</option>
@@ -103,7 +119,7 @@ const CircleCreatePage: NextPage = () => {
 
             {/* 도시 */}
             <div className="mb-4">
-              <label htmlFor="city" className="block text-lg font-medium text-gray-700">
+              <label htmlFor="city" className={commonLabelClasses}>
                 도시
               </label>
               <select
@@ -111,7 +127,7 @@ const CircleCreatePage: NextPage = () => {
                 name="city"
                 value={formData.city}
                 onChange={handleInputChange}
-                className="mt-1 w-full p-3 border border-gray-300 rounded-lg"
+                className={commonInputClasses}
                 required>
                 <option value="">도시 선택</option>
                 <option value="서울">서울</option>
@@ -126,20 +142,18 @@ const CircleCreatePage: NextPage = () => {
               </select>
             </div>
 
-            {/* 서클 소개 */}
+            {/* 영어 모임 소개 */}
             <div className="mb-4">
-              <label
-                htmlFor="introduction"
-                className="block text-lg font-medium text-gray-700">
-                서클 소개
+              <label htmlFor="introduction" className={commonLabelClasses}>
+                영어 모임 소개
               </label>
               <textarea
                 id="introduction"
                 name="introduction"
                 value={formData.introduction}
                 onChange={handleInputChange}
-                className="mt-1 w-full p-3 border border-gray-300 rounded-lg"
-                placeholder="서클을 소개해주세요"
+                className={`${commonInputClasses} resize-none`}
+                placeholder="영어 모임을 소개해주세요"
                 rows={4}
                 required
               />
@@ -147,28 +161,20 @@ const CircleCreatePage: NextPage = () => {
 
             {/* 정원 */}
             <div className="mb-4">
-              <label
-                htmlFor="capacity"
-                className="block text-lg font-medium text-gray-700">
-                정원
-              </label>
-              <input
-                type="number"
+              <InputField
                 id="capacity"
-                name="capacity"
-                value={formData.capacity}
+                label="정원"
+                type="number"
+                value={formData.capacity.toString()}
                 onChange={handleInputChange}
-                className="mt-1 w-full p-3 border border-gray-300 rounded-lg"
-                min={1}
                 required
+                placeholder="정원을 입력하세요"
               />
             </div>
 
             {/* 참여 방식 */}
             <div className="mb-4">
-              <label
-                htmlFor="attend_mode"
-                className="block text-lg font-medium text-gray-700">
+              <label htmlFor="attend_mode" className={commonLabelClasses}>
                 참여 방식
               </label>
               <select
@@ -176,7 +182,7 @@ const CircleCreatePage: NextPage = () => {
                 name="attend_mode"
                 value={formData.attend_mode}
                 onChange={handleInputChange}
-                className="mt-1 w-full p-3 border border-gray-300 rounded-lg"
+                className={commonInputClasses}
                 required>
                 <option value="오프라인">오프라인</option>
                 <option value="온라인">온라인</option>
@@ -186,20 +192,14 @@ const CircleCreatePage: NextPage = () => {
             {/* 오프라인일 경우 주소 입력 */}
             {formData.attend_mode === '오프라인' && (
               <div className="mb-4">
-                <label
-                  htmlFor="address"
-                  className="block text-lg font-medium text-gray-700">
-                  주소
-                </label>
-                <input
-                  type="text"
+                <InputField
                   id="address"
-                  name="address"
-                  value={formData.address}
+                  label="주소"
+                  type="text"
+                  value={formData.address || ''}
                   onChange={handleInputChange}
-                  className="mt-1 w-full p-3 border border-gray-300 rounded-lg"
+                  required
                   placeholder="오프라인 모임 장소의 주소를 입력하세요"
-                  required={formData.attend_mode === '오프라인'}
                 />
               </div>
             )}
@@ -207,63 +207,47 @@ const CircleCreatePage: NextPage = () => {
             {/* 온라인일 경우 URL 입력 */}
             {formData.attend_mode === '온라인' && (
               <div className="mb-4">
-                <label
-                  htmlFor="online_url"
-                  className="block text-lg font-medium text-gray-700">
-                  온라인 URL
-                </label>
-                <input
-                  type="url"
+                <InputField
                   id="online_url"
-                  name="online_url"
-                  value={formData.online_url}
+                  label="온라인 URL"
+                  type="url"
+                  value={formData.online_url || ''}
                   onChange={handleInputChange}
-                  className="mt-1 w-full p-3 border border-gray-300 rounded-lg"
+                  required
                   placeholder="온라인 참여 링크를 입력하세요"
-                  required={formData.attend_mode === '온라인'}
                 />
               </div>
             )}
 
             {/* 연락 방법 */}
             <div className="mb-4">
-              <label
-                htmlFor="contact_way"
-                className="block text-lg font-medium text-gray-700">
-                연락 방법
-              </label>
-              <input
-                type="text"
+              <InputField
                 id="contact_way"
-                name="contact_way"
+                label="연락 방법"
+                type="text"
                 value={formData.contact_way}
                 onChange={handleInputChange}
-                className="mt-1 w-full p-3 border border-gray-300 rounded-lg"
-                placeholder="카카오톡 오픈 채팅, 이메일 등"
                 required
+                placeholder="카카오톡 오픈 채팅, 이메일 등"
               />
             </div>
 
             {/* 제출 및 삭제 버튼 */}
             <div className="flex justify-between">
-              <button
-                type="submit"
-                className="bg-blue-500 text-white py-3 px-6 rounded-lg hover:bg-blue-600 transition duration-300">
-                서클 생성하기
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setIsDeleteModalOpen(true)}
-                className="bg-red-500 text-white py-3 px-6 rounded-lg hover:bg-red-600 transition duration-300">
-                서클 삭제하기
-              </button>
+              <Button color="cyan" onClick={handleSubmit}>
+                영어 모임 만들기
+              </Button>
+              {circleId && (
+                <Button color="red" type="submit">
+                  영어 모임 삭제하기
+                </Button>
+              )}
             </div>
           </form>
         </div>
       </div>
 
-      {/* 서클 삭제 확인 모달 */}
+      {/* 영어 모임 삭제 확인 모달 */}
       <Transition
         show={isDeleteModalOpen}
         enter="transition-opacity duration-300"
@@ -275,9 +259,9 @@ const CircleCreatePage: NextPage = () => {
         <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center">
           <div className="bg-white p-6 rounded-lg shadow-xl">
             <h3 className="text-xl font-semibold text-gray-800">
-              정말 서클을 삭제하시겠습니까?
+              정말 영어 모임을 삭제하시겠습니까?
             </h3>
-            <p className="text-gray-600 mt-2">삭제한 서클은 복구할 수 없습니다.</p>
+            <p className="text-gray-600 mt-2">삭제한 영어 모임은 복구할 수 없습니다.</p>
             <div className="mt-6 flex justify-between">
               <button
                 onClick={() => setIsDeleteModalOpen(false)}

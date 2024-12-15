@@ -65,7 +65,7 @@ const CircleListPage: NextPage = () => {
         <button
           onClick={() => {
             if (signInResponse) {
-              router.push('/circle/create')
+              router.push('/circle/manage')
             } else {
               setShowLoginModal(true)
             }

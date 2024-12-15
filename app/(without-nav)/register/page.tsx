@@ -4,6 +4,7 @@ import {useAuth} from '@/contexts'
 import Link from 'next/link'
 import {ChangeEvent, useCallback, useState} from 'react'
 import '../../../styles/globals.css'
+import InputField from '@/components/input/InputField'
 
 type SignUpFormType = {
   name: string
@@ -36,9 +37,9 @@ export default function Register() {
     email: '',
     password: '',
     confirmPassword: '',
-    isTermsAgreed: false, // 초기값: false
-    isPrivacyAgreed: false, // 초기값: false
-    isMarketingAgreed: false // 초기값: false (선택 항목)
+    isTermsAgreed: false,
+    isPrivacyAgreed: false,
+    isMarketingAgreed: false
   })
   const [isEmailValid, setIsEmailValid] = useState<boolean>(false)
 
@@ -142,46 +143,20 @@ export default function Register() {
 
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
         <form className="space-y-6" action="#" method="POST">
-          <div>
-            <div className="flex items-center justify-between">
-              <label
-                htmlFor="username"
-                className="block text-sm font-semibold leading-6 text-gray-900">
-                이름
-              </label>
-            </div>
-            <div className="mt-1">
-              <input
-                id="username"
-                type="text"
-                value={name}
-                onChange={changed('name')}
-                required
-                className="mt-1 appearance-none text-slate-900 bg-white rounded-md block w-full px-3 h-10 shadow-sm sm:text-sm focus:outline-none placeholder:text-slate-400 focus:ring-2 focus:ring-cyan-600 ring-2 ring-slate-300"
-              />
-            </div>
-          </div>
-          <div>
-            <div className="flex items-center justify-between">
-              <label
-                htmlFor="password"
-                className="block text-sm font-semibold leading-6 text-gray-900">
-                닉네임
-              </label>
-            </div>
-            <div className="mt-1">
-              <input
-                id="nickname"
-                type="text"
-                value={nickname}
-                onChange={changed('nickname')}
-                autoComplete="current-password"
-                required
-                className="mt-1 appearance-none text-slate-900 bg-white rounded-md block w-full px-3 h-10 shadow-sm sm:text-sm focus:outline-none placeholder:text-slate-400 focus:ring-2 focus:ring-cyan-600 ring-2 ring-slate-300"
-              />
-            </div>
-          </div>
-
+          <InputField
+            id="name"
+            label="이름"
+            type="text"
+            value={name}
+            onChange={changed('name')}
+          />
+          <InputField
+            id="nickname"
+            label="닉네임"
+            type="text"
+            value={nickname}
+            onChange={changed('nickname')}
+          />
           <div>
             <label
               htmlFor="email"
@@ -192,51 +167,22 @@ export default function Register() {
               <EmailInput onEmailChange={handleEmailChange} />
             </div>
           </div>
-
-          <div>
-            <div className="flex items-center justify-between">
-              <label
-                htmlFor="password"
-                className="block text-sm font-semibold leading-6 text-gray-900">
-                비밀번호
-              </label>
-            </div>
-            <div className="mt-1">
-              <input
-                id="password"
-                name="password"
-                type="password"
-                value={password}
-                onChange={changed('password')}
-                autoComplete="current-password"
-                required
-                className="mt-1 appearance-none text-slate-900 bg-white rounded-md block w-full px-3 h-10 shadow-sm sm:text-sm focus:outline-none placeholder:text-slate-400 focus:ring-2 focus:ring-cyan-600 ring-2 ring-slate-300"
-              />
-            </div>
-          </div>
-
-          <div>
-            <div className="flex items-center justify-between">
-              <label
-                htmlFor="confirmPassword"
-                className="block text-sm font-semibold leading-6 text-gray-900">
-                비밀번호확인
-              </label>
-            </div>
-            <div className="mt-1">
-              <input
-                id="confirmPassword"
-                name="password"
-                type="password"
-                value={confirmPassword}
-                onChange={changed('confirmPassword')}
-                autoComplete="current-password"
-                required
-                className="mt-1 appearance-none text-slate-900 bg-white rounded-md block w-full px-3 h-10 shadow-sm sm:text-sm focus:outline-none placeholder:text-slate-400 focus:ring-2 focus:ring-cyan-600 ring-2 ring-slate-300"
-              />
-            </div>
-          </div>
-
+          <InputField
+            id="password"
+            label="비밀번호"
+            type="password"
+            value={password}
+            onChange={changed('password')}
+            required
+          />
+          <InputField
+            id="confirmPassword"
+            label="비밀번호 확인"
+            type="password"
+            value={confirmPassword}
+            onChange={changed('confirmPassword')}
+            required
+          />
           <div className="mt-4">
             <label className="block text-sm font-semibold leading-6 text-gray-900">
               <input

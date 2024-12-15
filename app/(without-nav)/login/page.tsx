@@ -7,6 +7,7 @@ import {useAuth} from '@/contexts'
 import {useRouter} from 'next/navigation'
 import * as U from '@/utils'
 import {TSignUpData} from '@/types/auth'
+import InputField from '@/components/input/InputField'
 
 type LoginFormType = Record<'email' | 'password', string>
 const initialFormState = {email: '', password: ''}
@@ -63,26 +64,14 @@ export default function Login() {
 
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
         <form className="space-y-6" action="#" method="POST">
-          <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-semibold leading-6 text-gray-900">
-              이메일
-            </label>
-            <div className="mt-2">
-              <input
-                id="email"
-                name="email"
-                type="email"
-                value={email}
-                onChange={changed('email')}
-                autoComplete="email"
-                required
-                className="ring-2 mt-2 appearance-none text-slate-900 bg-white rounded-md block w-full px-3 h-10 shadow-sm sm:text-sm focus:outline-none placeholder:text-slate-400 focus:ring-2 focus:ring-cyan-600 ring-slate-300"
-              />
-            </div>
-          </div>
-
+          <InputField
+            id="email"
+            label="이메일"
+            type="email"
+            value={email}
+            onChange={changed('email')}
+            required
+          />
           <div>
             <div className="flex items-center justify-between">
               <label
