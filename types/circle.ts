@@ -39,4 +39,19 @@ type TCircleDetail = {
   circleSchedules: TCircleSchedule[] // 일정 정보 배열
 }
 
-export type {TCircle, TCircleDetail, TCircleSchedule}
+type TCircleCreateRequest = {
+  title: string
+  englishLevel: string
+  city: string
+  thumbnail?: string
+  introduction: string
+  address?: string
+  capacity: number
+  circleStatus: string
+  attendMode: string
+  contactWay: string
+  onlineUrl?: string
+  circleSchedules: TCircleSchedule[]
+}
+
+export type {TCircle, TCircleDetail, TCircleSchedule, TCircleCreateRequest}

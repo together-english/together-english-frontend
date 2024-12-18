@@ -6,6 +6,8 @@ import InputField from '@/components/input/InputField'
 import Button from '@/components/button/Button'
 import {useSearchParams} from 'next/navigation'
 import ErrorModal from '@/components/modal/ErrorModal'
+import {postWithJwt} from '@/server'
+import {TCircleCreateRequest, TCircleSchedule} from '@/types/circle'
 
 interface CircleForm {
   name: string
@@ -58,6 +60,22 @@ const CircleCreatePage: NextPage = () => {
     if (!formData.name) {
       handleError('영어 모임 이름을 입력해주세요')
     }
+    if (!formData.english_level) {
+      handleError('영어 레벨을 선택해주세요')
+    }
+    if (!formData.city) {
+      handleError('도시를 선택해주세요')
+    }
+    if (!formData.introduction) {
+      handleError('영어 모임 소개를 입력해주세요')
+    }
+    if (formData.capacity < 0) {
+      handleError('정원은 1명 이상이어야 합니다.')
+    }
+    if (!formData.contact_way) {
+      handleError('연락 방법을 입력해주세요')
+    }
+    //postWithJwt('/circle')
   }
 
   const handleDeleteCircle = () => {
