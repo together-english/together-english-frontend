@@ -11,6 +11,7 @@ import {
 import Link from 'next/link'
 import {usePathname, useRouter} from 'next/navigation'
 import {useAuth} from '@/contexts'
+import Image from 'next/image'
 
 const navigation = [
   {name: 'Home', href: '/'},
@@ -88,10 +89,12 @@ export default function Navigation() {
               <div className="relative mt-1">
                 <Listbox.Button className="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left shadow-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 sm:text-sm">
                   <span className="flex items-center">
-                    <img
+                    <Image
                       src={
-                        signInResponse.memberDto.profile || 'images/defaultProfile.png'
+                        signInResponse.memberDto.profile || '/images/defaultProfile.png'
                       }
+                      width={150}
+                      height={150}
                       alt="Profile"
                       className="h-8 w-8 rounded-full border-2 border-cyan-600"
                     />
@@ -188,7 +191,11 @@ export default function Navigation() {
               <Link
                 key={item.name}
                 href={item.href}
-                className="block rounded-lg px-3 py-2 text-base font-semibold text-gray-900 hover:bg-gray-50">
+                className={`block rounded-lg px-3 py-2 text-base font-semibold ${
+                  item.name === '영어모임 둘러보기'
+                    ? 'text-white bg-cyan-600 hover:bg-cyan-700'
+                    : 'text-gray-900 hover:bg-gray-50'
+                }`}>
                 {item.name}
               </Link>
             ))}
