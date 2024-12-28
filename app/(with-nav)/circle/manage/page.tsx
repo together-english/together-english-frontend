@@ -9,32 +9,54 @@ import ErrorModal from '@/components/modal/ErrorModal'
 import {postWithJwt} from '@/server'
 import {TCircleCreateRequest, TCircleSchedule} from '@/types/circle'
 
-interface CircleForm {
-  name: string
-  english_level: string
-  city: string
-  introduction: string
-  capacity: number
-  attend_mode: string
-  address?: string
-  online_url?: string
-  contact_way: string
-}
-
 const CircleCreatePage: NextPage = () => {
   const searchParams = useSearchParams()
   const circleId = searchParams.get('circleId')
-  const [formData, setFormData] = useState<CircleForm>({
-    name: '',
-    english_level: '',
+  const [formData, setFormData] = useState<TCircleCreateRequest>({
+    title: '',
+    englishLevel: '',
     city: '',
     introduction: '',
     capacity: 10,
-    attend_mode: '오프라인',
-    address: '',
-    online_url: '',
-    contact_way: ''
+    circleStatus: 'ACTIVE',
+    attendMode: '오프라인',
+    contactWay: '',
+    circleSchedules: [{dayOfWeek: '', startTime: '', endTime: ''}]
   })
+
+  const addScheduleField = (index: number) => {
+    setFormData(prev => {
+      const updatedSchedules = [...prev.circleSchedules]
+      updatedSchedules.splice(index + 1, 0, {dayOfWeek: '', startTime: '', endTime: ''})
+      return {...prev, circleSchedules: updatedSchedules}
+    })
+  }
+
+  const handleScheduleChange = (
+    index: number,
+    field: keyof TCircleSchedule,
+    value: string
+  ) => {
+    setFormData(prev => {
+      const updatedSchedules = [...prev.circleSchedules]
+      updatedSchedules[index] = {
+        ...updatedSchedules[index],
+        [field]: value
+      }
+      return {...prev, circleSchedules: updatedSchedules}
+    })
+  }
+
+  const removeScheduleField = (index: number) => {
+    if (formData.circleSchedules.length === 1) {
+      handleError('최소 하나의 일정은 필요합니다.')
+      return
+    }
+    setFormData(prev => ({
+      ...prev,
+      circleSchedules: prev.circleSchedules.filter((_, i) => i !== index)
+    }))
+  }
 
   const [showErrorModal, setShowErrorModal] = useState<boolean>(false)
   const [errorMessage, setErrorMessage] = useState<string>('')
@@ -45,22 +67,24 @@ const CircleCreatePage: NextPage = () => {
     setShowErrorModal(true)
   }
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
-  ) => {
-    const {name, value} = e.target
-    setFormData(prevData => ({
-      ...prevData,
-      [name]: value
-    }))
-  }
+  const handleInputChange =
+    (name: string) =>
+    (
+      e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    ) => {
+      const {value} = e.target
+      setFormData(prevData => ({
+        ...prevData,
+        [name]: value
+      }))
+    }
 
   const handleSubmit = () => {
     console.log('영어 모임 정보 제출됨:', formData)
-    if (!formData.name) {
-      handleError('영어 모임 이름을 입력해주세요')
+    if (!formData.title) {
+      handleError('영어 모임 제목을 입력해주세요')
     }
-    if (!formData.english_level) {
+    if (!formData.englishLevel) {
       handleError('영어 레벨을 선택해주세요')
     }
     if (!formData.city) {
@@ -72,9 +96,10 @@ const CircleCreatePage: NextPage = () => {
     if (formData.capacity < 0) {
       handleError('정원은 1명 이상이어야 합니다.')
     }
-    if (!formData.contact_way) {
+    if (!formData.contactWay) {
       handleError('연락 방법을 입력해주세요')
     }
+    console.log('FormData updated:', formData)
     //postWithJwt('/circle')
   }
 
@@ -84,7 +109,7 @@ const CircleCreatePage: NextPage = () => {
   }
   const commonLabelClasses = 'block text-sm font-semibold leading-6 text-gray-900'
   const commonInputClasses =
-    'mt-1 w-full p-3 border rounded-md shadow-sm text-gray-900 bg-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-600 focus-visible:ring-2 focus-visible:ring-cyan-600 ring-2 ring-gray-300'
+    'mt-1 w-full p-2 border rounded-md shadow-sm text-gray-900 bg-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-600 focus-visible:ring-2 focus-visible:ring-cyan-600 ring-2 ring-gray-300'
 
   return (
     <div className="container mx-auto p-8">
@@ -104,11 +129,11 @@ const CircleCreatePage: NextPage = () => {
             {/* 영어 모임 이름 */}
             <div className="mb-4">
               <InputField
-                id="name"
+                id="title"
                 label="영어 모임 이름"
                 type="text"
-                value={formData.name}
-                onChange={handleInputChange}
+                value={formData.title}
+                onChange={handleInputChange('title')}
                 required
                 placeholder="영어 모임 이름을 입력하세요"
               />
@@ -122,8 +147,8 @@ const CircleCreatePage: NextPage = () => {
               <select
                 id="english_level"
                 name="english_level"
-                value={formData.english_level}
-                onChange={handleInputChange}
+                value={formData.englishLevel}
+                onChange={handleInputChange('englishLevel')}
                 className={commonInputClasses}
                 required>
                 <option value="">레벨 선택</option>
@@ -144,7 +169,7 @@ const CircleCreatePage: NextPage = () => {
                 id="city"
                 name="city"
                 value={formData.city}
-                onChange={handleInputChange}
+                onChange={handleInputChange('city')}
                 className={commonInputClasses}
                 required>
                 <option value="">도시 선택</option>
@@ -169,7 +194,7 @@ const CircleCreatePage: NextPage = () => {
                 id="introduction"
                 name="introduction"
                 value={formData.introduction}
-                onChange={handleInputChange}
+                onChange={handleInputChange('introduction')}
                 className={`${commonInputClasses} resize-none`}
                 placeholder="영어 모임을 소개해주세요"
                 rows={4}
@@ -184,7 +209,7 @@ const CircleCreatePage: NextPage = () => {
                 label="정원"
                 type="number"
                 value={formData.capacity.toString()}
-                onChange={handleInputChange}
+                onChange={handleInputChange('capacity')}
                 required
                 placeholder="정원을 입력하세요"
               />
@@ -198,8 +223,8 @@ const CircleCreatePage: NextPage = () => {
               <select
                 id="attend_mode"
                 name="attend_mode"
-                value={formData.attend_mode}
-                onChange={handleInputChange}
+                value={formData.attendMode}
+                onChange={handleInputChange('attendMode')}
                 className={commonInputClasses}
                 required>
                 <option value="오프라인">오프라인</option>
@@ -208,14 +233,14 @@ const CircleCreatePage: NextPage = () => {
             </div>
 
             {/* 오프라인일 경우 주소 입력 */}
-            {formData.attend_mode === '오프라인' && (
+            {formData.attendMode === '오프라인' && (
               <div className="mb-4">
                 <InputField
                   id="address"
                   label="주소"
                   type="text"
                   value={formData.address || ''}
-                  onChange={handleInputChange}
+                  onChange={handleInputChange('address')}
                   required
                   placeholder="오프라인 모임 장소의 주소를 입력하세요"
                 />
@@ -223,14 +248,14 @@ const CircleCreatePage: NextPage = () => {
             )}
 
             {/* 온라인일 경우 URL 입력 */}
-            {formData.attend_mode === '온라인' && (
+            {formData.attendMode === '온라인' && (
               <div className="mb-4">
                 <InputField
                   id="online_url"
                   label="온라인 URL"
                   type="url"
-                  value={formData.online_url || ''}
-                  onChange={handleInputChange}
+                  value={formData.onlineUrl || ''}
+                  onChange={handleInputChange('onlineUrl')}
                   required
                   placeholder="온라인 참여 링크를 입력하세요"
                 />
@@ -243,11 +268,69 @@ const CircleCreatePage: NextPage = () => {
                 id="contact_way"
                 label="연락 방법"
                 type="text"
-                value={formData.contact_way}
-                onChange={handleInputChange}
+                value={formData.contactWay}
+                onChange={handleInputChange('contactWay')}
                 required
                 placeholder="카카오톡 오픈 채팅, 이메일 등"
               />
+            </div>
+
+            {/* 일정 필드 */}
+            <div className="mt-6">
+              <h3 className="text-xl font-semibold mb-2">일정</h3>
+              {formData.circleSchedules.map((schedule, index) => (
+                <div key={index} className="mb-4 flex items-center space-x-4">
+                  <div className="w-1/3">
+                    <label className={commonLabelClasses}>요일</label>
+                    <select
+                      value={schedule.dayOfWeek}
+                      onChange={e =>
+                        handleScheduleChange(index, 'dayOfWeek', e.target.value)
+                      }
+                      className={commonInputClasses}>
+                      <option value="">요일 선택</option>
+                      <option value="MONDAY">월요일</option>
+                      <option value="TUESDAY">화요일</option>
+                      <option value="WEDNESDAY">수요일</option>
+                      <option value="THURSDAY">목요일</option>
+                      <option value="FRIDAY">금요일</option>
+                      <option value="SATURDAY">토요일</option>
+                      <option value="SUNDAY">일요일</option>
+                    </select>
+                  </div>
+                  <InputField
+                    id={`startTime-${index}`}
+                    label="시작 시간"
+                    type="time"
+                    value={schedule.startTime}
+                    onChange={e =>
+                      handleScheduleChange(index, 'startTime', e.target.value)
+                    }
+                  />
+                  <InputField
+                    id={`endTime-${index}`}
+                    label="종료 시간"
+                    type="time"
+                    value={schedule.endTime}
+                    onChange={e => handleScheduleChange(index, 'endTime', e.target.value)}
+                  />
+                  {/* 삭제 및 추가 버튼 */}
+                  <div className="flex space-x-2 mt-5">
+                    <button
+                      type="button"
+                      onClick={() => removeScheduleField(index)}
+                      className="text-red-500 hover:text-red-700">
+                      삭제
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => addScheduleField(index)}
+                      className="text-cyan-500 hover:text-cyan-700">
+                      + 추가
+                    </button>
+                  </div>
+                </div>
+              ))}
             </div>
 
             {/* 제출 및 삭제 버튼 */}
