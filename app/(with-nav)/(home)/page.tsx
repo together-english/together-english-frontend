@@ -24,7 +24,9 @@ export default function Home() {
               학습 파트너와 함께 새로운 영어 학습의 길을 열어보세요.
             </p>
             <div className="mt-10 flex justify-center gap-x-6">
-              <Link href="/circle" className="text-sm font-semibold leading-6 text-black">
+              <Link
+                href="/circle"
+                className="inline-block text-sm font-semibold leading-6 text-white bg-gradient-to-r from-cyan-500 to-cyan-700 px-5 py-2 rounded-full shadow-lg hover:from-cyan-600 hover:to-cyan-800 transition-all">
                 영어모임 둘러보기 <span aria-hidden="true">→</span>
               </Link>
             </div>
