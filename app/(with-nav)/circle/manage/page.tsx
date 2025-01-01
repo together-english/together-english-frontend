@@ -6,8 +6,10 @@ import InputField from '@/components/input/InputField'
 import Button from '@/components/button/Button'
 import {useSearchParams} from 'next/navigation'
 import ErrorModal from '@/components/modal/ErrorModal'
+import InfoModal from '@/components/modal/InfoModal'
 import {postWithJwt} from '@/server'
 import {TCircleCreateRequest, TCircleSchedule} from '@/types/circle'
+import {StatusEnum} from '@/types/status'
 
 const CircleCreatePage: NextPage = () => {
   const searchParams = useSearchParams()
@@ -19,10 +21,28 @@ const CircleCreatePage: NextPage = () => {
     introduction: '',
     capacity: 10,
     circleStatus: 'ACTIVE',
-    attendMode: '오프라인',
+    attendMode: 'OFFLINE',
     contactWay: '',
     circleSchedules: [{dayOfWeek: '', startTime: '', endTime: ''}]
   })
+
+  const City = [
+    {value: 'GANGNAM', label: '강남'},
+    {value: 'SINCHON', label: '신촌'},
+    {value: 'HONGDAE', label: '홍대'},
+    {value: 'KONDAE', label: '건대'},
+    {value: 'SINRIM', label: '신림'},
+    {value: 'SUWON', label: '수원'},
+    {value: 'PANGYO', label: '판교'},
+    {value: 'INCHEON', label: '인천'},
+    {value: 'DAEJEON', label: '대전'},
+    {value: 'DAEGU', label: '대구'},
+    {value: 'ULSAN', label: '울산'},
+    {value: 'CHANGWON', label: '창원'},
+    {value: 'BUSAN', label: '부산'},
+    {value: 'ETC', label: '기타'},
+    {value: 'ONLINE', label: '온라인'}
+  ]
 
   const addScheduleField = (index: number) => {
     setFormData(prev => {
@@ -59,12 +79,19 @@ const CircleCreatePage: NextPage = () => {
   }
 
   const [showErrorModal, setShowErrorModal] = useState<boolean>(false)
+  const [showInfoModal, setShowInfoModal] = useState<boolean>(false)
   const [errorMessage, setErrorMessage] = useState<string>('')
+  const [InfoMessage, setInfoMessage] = useState<string>('')
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false)
 
   const handleError = (message: string) => {
     setErrorMessage(message)
     setShowErrorModal(true)
+  }
+
+  const handleInfoModal = (message: string) => {
+    setInfoMessage(message)
+    setShowInfoModal(true)
   }
 
   const handleInputChange =
@@ -81,26 +108,55 @@ const CircleCreatePage: NextPage = () => {
 
   const handleSubmit = () => {
     console.log('영어 모임 정보 제출됨:', formData)
+    let hasError = false
     if (!formData.title) {
       handleError('영어 모임 제목을 입력해주세요')
+      hasError = true
     }
     if (!formData.englishLevel) {
       handleError('영어 레벨을 선택해주세요')
+      hasError = true
     }
     if (!formData.city) {
       handleError('도시를 선택해주세요')
+      hasError = true
     }
     if (!formData.introduction) {
       handleError('영어 모임 소개를 입력해주세요')
+      hasError = true
     }
     if (formData.capacity < 0) {
       handleError('정원은 1명 이상이어야 합니다.')
+      hasError = true
     }
     if (!formData.contactWay) {
       handleError('연락 방법을 입력해주세요')
+      hasError = true
     }
-    console.log('FormData updated:', formData)
-    //postWithJwt('/circle')
+    formData.circleSchedules.forEach(schedule => {
+      if (!schedule.dayOfWeek || !schedule.startTime || !schedule.endTime) {
+        handleError('스케줄 정보를 입력해주세요')
+        hasError = true
+      }
+    })
+    if (!hasError) {
+      console.log('FormData updated:', formData)
+      const multipartData = new FormData()
+      multipartData.append('request', JSON.stringify(formData))
+      postWithJwt('/circle', multipartData)
+        .then(res => res.json())
+        .then((result: {status: string; data?: string; message: string}) => {
+          if (result.status === StatusEnum.SUCCESS && result.data) {
+            handleInfoModal('영어 모임 생성에 성공했습니다.')
+          } else {
+            handleError(result.message)
+          }
+        })
+    }
+  }
+
+  const moveToCirclePage = () => {
+    window.location.href = '/circle'
   }
 
   const handleDeleteCircle = () => {
@@ -119,6 +175,12 @@ const CircleCreatePage: NextPage = () => {
             show={showErrorModal}
             onClose={() => setShowErrorModal(false)}
             message={errorMessage}
+          />
+          <InfoModal
+            show={showInfoModal}
+            onClose={() => setShowInfoModal(false)}
+            onConfirm={moveToCirclePage}
+            message={InfoMessage}
           />
 
           <h1 className="text-3xl font-bold text-gray-800 mb-6">
@@ -152,11 +214,11 @@ const CircleCreatePage: NextPage = () => {
                 className={commonInputClasses}
                 required>
                 <option value="">레벨 선택</option>
-                <option value="Beginner">초급</option>
-                <option value="Intermediate">중급</option>
-                <option value="Advanced">고급</option>
-                <option value="Proficient">숙련</option>
-                <option value="Native">원어민 수준</option>
+                <option value="BEGINNER">초급</option>
+                <option value="INTERMEDIATE">중급</option>
+                <option value="ADVANCED">고급</option>
+                <option value="PROFICIENT">숙련</option>
+                <option value="NATIVE">원어민 수준</option>
               </select>
             </div>
 
@@ -173,15 +235,11 @@ const CircleCreatePage: NextPage = () => {
                 className={commonInputClasses}
                 required>
                 <option value="">도시 선택</option>
-                <option value="서울">서울</option>
-                <option value="부산">부산</option>
-                <option value="인천">인천</option>
-                <option value="대구">대구</option>
-                <option value="대전">대전</option>
-                <option value="울산">울산</option>
-                <option value="창원">창원</option>
-                <option value="기타">기타</option>
-                <option value="온라인">온라인</option>
+                {City.map(city => (
+                  <option key={city.value} value={city.value}>
+                    {city.label}
+                  </option>
+                ))}
               </select>
             </div>
 
@@ -227,13 +285,13 @@ const CircleCreatePage: NextPage = () => {
                 onChange={handleInputChange('attendMode')}
                 className={commonInputClasses}
                 required>
-                <option value="오프라인">오프라인</option>
-                <option value="온라인">온라인</option>
+                <option value="ONLINE">온라인</option>
+                <option value="OFFLINE">오프라인</option>
               </select>
             </div>
 
             {/* 오프라인일 경우 주소 입력 */}
-            {formData.attendMode === '오프라인' && (
+            {formData.attendMode === 'OFFLINE' && (
               <div className="mb-4">
                 <InputField
                   id="address"
@@ -248,7 +306,7 @@ const CircleCreatePage: NextPage = () => {
             )}
 
             {/* 온라인일 경우 URL 입력 */}
-            {formData.attendMode === '온라인' && (
+            {formData.attendMode === 'ONLINE' && (
               <div className="mb-4">
                 <InputField
                   id="online_url"

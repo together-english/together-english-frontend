@@ -94,7 +94,7 @@ const CircleListPage: NextPage = () => {
             capacity={circle.capacity}
             totalView={circle.totalView || 0}
             leaderName={circle.leaderName}
-            leaderProfile={circle.leaderProfile}
+            leaderProfile={circle.leaderProfile || '/images/defaultProfile.png'}
             likedByMe={circle.likedByMe}
             totalLike={circle.totalLike || 0}
           />

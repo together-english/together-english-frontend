@@ -60,7 +60,7 @@ const CircleDetailPage: NextPage = () => {
                 className="w-16 h-16 rounded-full mr-4"
                 width={64}
                 height={64}
-                src={circleDetail.leaderProfile || '/images/default-profile.jpg'}
+                src={circleDetail.leaderProfile || '/images/defaultProfile.png'}
                 alt={circleDetail.leaderName}
               />
               <div>
