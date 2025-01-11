@@ -4,7 +4,6 @@ import {useState} from 'react'
 import {Transition} from '@headlessui/react'
 import InputField from '@/components/input/InputField'
 import Button from '@/components/button/Button'
-import {useSearchParams} from 'next/navigation'
 import ErrorModal from '@/components/modal/ErrorModal'
 import InfoModal from '@/components/modal/InfoModal'
 import {postWithJwt} from '@/server'
@@ -12,8 +11,6 @@ import {TCircleCreateRequest, TCircleSchedule} from '@/types/circle'
 import {StatusEnum} from '@/types/status'
 
 const CircleCreatePage: NextPage = () => {
-  const searchParams = useSearchParams()
-  const circleId = searchParams.get('circleId')
   const [formData, setFormData] = useState<TCircleCreateRequest>({
     title: '',
     englishLevel: '',
@@ -396,11 +393,6 @@ const CircleCreatePage: NextPage = () => {
               <Button color="cyan" onClick={handleSubmit}>
                 영어 모임 만들기
               </Button>
-              {circleId && (
-                <Button color="red" type="submit">
-                  영어 모임 삭제하기
-                </Button>
-              )}
             </div>
           </form>
         </div>
