@@ -10,7 +10,7 @@ import {useRouter} from 'next/navigation'
 import {useAuth} from '@/contexts'
 import LoginModal from '@/components/modal/LoginModal'
 import {post, postWithJwt} from '@/server'
-import {StatusEnum} from '@/types/status'
+import {City, StatusEnum} from '@/types/status'
 
 const CircleListPage: NextPage = () => {
   const router = useRouter()
@@ -20,6 +20,10 @@ const CircleListPage: NextPage = () => {
   const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false)
   const [showLoginModal, setShowLoginModal] = useState(false)
   const [totalPages, setTotalPages] = useState<number>(1)
+
+  const getCityValue = (key: string): string | undefined => {
+    return City[key as keyof typeof City]
+  }
 
   const fetchCircles = useCallback(
     (page: number) => {
@@ -31,7 +35,14 @@ const CircleListPage: NextPage = () => {
           .then((result: TApiResponse<TPaginatedData<TCircle>>) => {
             if (result.status === StatusEnum.SUCCESS && result.data) {
               if (result.data.content) {
-                setCircles(result.data.content)
+                const updatedContent = result.data.content.map(item => {
+                  const cityValue = City[item.city as keyof typeof City] || 'etc'
+                  return {
+                    ...item,
+                    city: cityValue
+                  }
+                })
+                setCircles(updatedContent)
                 setTotalPages(result.data.totalPages)
               }
             } else {

@@ -6,7 +6,7 @@ import {useState, useEffect} from 'react'
 import {get} from '@/server'
 import {TCircleDetail, TCircleSchedule} from '@/types/circle'
 import {TApiResponse} from '@/types/common'
-import {StatusEnum} from '@/types/status'
+import {City, StatusEnum} from '@/types/status'
 
 const CircleDetailPage: NextPage = () => {
   const {id} = useParams()
@@ -14,12 +14,17 @@ const CircleDetailPage: NextPage = () => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
+  const getCityValue = (key: string): string | 'etc' => {
+    return City[key as keyof typeof City]
+  }
+
   useEffect(() => {
     if (!id) return
     get(`/circle/detail/${id}`)
       .then(res => res.json())
       .then((result: TApiResponse<TCircleDetail>) => {
         if (result.status === StatusEnum.SUCCESS && result.data) {
+          result.data.city = getCityValue(result.data.city)
           setCircleDetail(result.data)
           setLoading(false)
         } else {
