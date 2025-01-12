@@ -1,6 +1,6 @@
 'use client'
 import {NextPage} from 'next'
-import {useState, useEffect} from 'react'
+import {useState, useEffect, useCallback} from 'react'
 import CircleModal from '@/components/modal/CircleModal'
 import Circle from '@/components/Circle'
 import {TCircle} from '@/types/circle'
@@ -9,7 +9,7 @@ import Pagination from '@/components/Pagination'
 import {useRouter} from 'next/navigation'
 import {useAuth} from '@/contexts'
 import LoginModal from '@/components/modal/LoginModal'
-import {post} from '@/server'
+import {post, postWithJwt} from '@/server'
 import {StatusEnum} from '@/types/status'
 
 const CircleListPage: NextPage = () => {
@@ -21,35 +21,43 @@ const CircleListPage: NextPage = () => {
   const [showLoginModal, setShowLoginModal] = useState(false)
   const [totalPages, setTotalPages] = useState<number>(1)
 
+  const fetchCircles = useCallback(
+    (page: number) => {
+      setCurrentPage(page)
+      if (signInResponse) {
+        // todo: 내가 좋아요 누른 정보도 포함한 API 호출 하도록 변경 필요
+        post(`/circle/list?page=${page - 1}`, {})
+          .then(res => res.json())
+          .then((result: TApiResponse<TPaginatedData<TCircle>>) => {
+            if (result.status === StatusEnum.SUCCESS && result.data) {
+              if (result.data.content) {
+                setCircles(result.data.content)
+                setTotalPages(result.data.totalPages)
+              }
+            } else {
+              // todo: 에러 처리
+            }
+          })
+      } else {
+        postWithJwt(`/circle/list?page=${page - 1}`, {})
+          .then(res => res.json())
+          .then((result: TApiResponse<TPaginatedData<TCircle>>) => {
+            if (result.status === StatusEnum.SUCCESS && result.data) {
+              if (result.data.content) {
+                setCircles(result.data.content)
+                setTotalPages(result.data.totalPages)
+              }
+            } else {
+              // todo: 에러 처리
+            }
+          })
+      }
+    },
+    [signInResponse, currentPage]
+  )
+
   useEffect(() => {
-    if (signInResponse) {
-      // todo: 내가 좋아요 누른 정보도 포함한 API 호출 하도록 변경 필요
-      post('/circle/list', {})
-        .then(res => res.json())
-        .then((result: TApiResponse<TPaginatedData<TCircle>>) => {
-          if (result.status === StatusEnum.SUCCESS && result.data) {
-            if (result.data.content) {
-              setCircles(result.data.content)
-              setTotalPages(result.data.totalPages)
-            }
-          } else {
-            // todo: 에러 처리
-          }
-        })
-    } else {
-      post('/circle/list', {})
-        .then(res => res.json())
-        .then((result: TApiResponse<TPaginatedData<TCircle>>) => {
-          if (result.status === StatusEnum.SUCCESS && result.data) {
-            if (result.data.content) {
-              setCircles(result.data.content)
-              setTotalPages(result.data.totalPages)
-            }
-          } else {
-            // todo: 에러 처리
-          }
-        })
-    }
+    fetchCircles(1)
   }, [signInResponse])
 
   return (
@@ -104,7 +112,7 @@ const CircleListPage: NextPage = () => {
       <Pagination
         currentPage={currentPage} // 현재 페이지
         totalPages={totalPages} // 전체 페이지 수
-        onPageChange={page => setCurrentPage(page)} // 페이지 변경 핸들러
+        onPageChange={page => fetchCircles(page)} // 페이지 변경 핸들러
       />
       <LoginModal show={showLoginModal} onClose={() => setShowLoginModal(false)} />
     </div>
