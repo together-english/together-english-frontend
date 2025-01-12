@@ -11,7 +11,7 @@ const Circle: React.FC<TCircle> = ({
   englishLevel,
   city,
   thumbnailUrl: thumbnail,
-  introduction,
+  title,
   capacity,
   totalView: totalViews,
   leaderName: leaderNickname,
@@ -40,20 +40,20 @@ const Circle: React.FC<TCircle> = ({
     <div
       key={id}
       className="bg-white shadow-2xl rounded-lg overflow-hidden hover:shadow-3xl transition-shadow duration-300 ease-in-out">
-      {/* Next.js Image 컴포넌트 수정 */}
+      {/* Thumbnail */}
       <div className="relative w-full h-[250px]">
         <Image
           src={thumbnail || '/images/defaultImage.png'}
           alt={name}
           fill
-          style={{objectFit: 'cover'}} // className 대신 스타일 지정
+          style={{objectFit: 'cover'}}
         />
       </div>
+      {/* Content */}
       <div className="p-6">
         <h3 className="text-2xl font-bold text-gray-800">{name}</h3>
-        <p className="text-gray-600 mt-2">{introduction}</p>
+        <p className="text-gray-600 mt-2 line-clamp-3">{title}</p>
         <div className="mt-4 flex items-center">
-          {/* 리더 프로필 이미지 */}
           <Image
             src={leaderProfile}
             alt={leaderNickname}

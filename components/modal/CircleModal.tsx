@@ -1,6 +1,7 @@
 import React, {useState} from 'react'
 import {useRouter} from 'next/navigation'
 import {Transition} from '@headlessui/react'
+import {City, EnglishLevel} from '@/types/status'
 
 interface CircleModalProps {
   isOpen: boolean
@@ -8,48 +9,20 @@ interface CircleModalProps {
   targetUrl: string
 }
 
-// City Enum
-const City = [
-  {value: 'GANGNAM', label: '강남'},
-  {value: 'SINCHON', label: '신촌'},
-  {value: 'HONGDAE', label: '홍대'},
-  {value: 'KONDAE', label: '건대'},
-  {value: 'SINRIM', label: '신림'},
-  {value: 'SUWON', label: '수원'},
-  {value: 'PANGYO', label: '판교'},
-  {value: 'INCHEON', label: '인천'},
-  {value: 'DAEJEON', label: '대전'},
-  {value: 'DAEGU', label: '대구'},
-  {value: 'ULSAN', label: '울산'},
-  {value: 'CHANGWON', label: '창원'},
-  {value: 'BUSAN', label: '부산'},
-  {value: 'ETC', label: '기타'},
-  {value: 'ONLINE', label: '온라인'}
-]
-
-// EnglishLevel Enum
-const EnglishLevel = [
-  {value: 'BEGINNER', label: '기초적인 영어 실력'},
-  {value: 'INTERMEDIATE', label: '중간 수준의 영어 실력'},
-  {value: 'ADVANCED', label: '고급 영어 실력'},
-  {value: 'PROFICIENT', label: '숙련된 영어 실력'},
-  {value: 'NATIVE', label: '원어민 수준의 영어 실력'}
-]
-
 const CircleModal: React.FC<CircleModalProps> = ({isOpen, onClose, targetUrl}) => {
   const router = useRouter()
-  const [selectedCity, setSelectedCity] = useState<string>('') // 초기값 없음
-  const [selectedLevel, setSelectedLevel] = useState<string>('') // 초기값 없음
-  const [circleName, setCircleName] = useState<string>('') // 초기값 없음
+  const [selectedCity, setSelectedCity] = useState<string>('')
+  const [selectedLevel, setSelectedLevel] = useState<string>('')
+  const [circleName, setCircleName] = useState<string>('')
 
   const handleApplyFilter = () => {
     const queryString = new URLSearchParams({
-      city: selectedCity || '', // 선택되지 않으면 빈 값으로 처리
+      city: selectedCity || '',
       level: selectedLevel || '',
       name: circleName || ''
     }).toString()
     router.push(`${targetUrl}?${queryString}`)
-    onClose() // 모달 닫기
+    onClose()
   }
 
   if (!isOpen) return null
@@ -83,16 +56,16 @@ const CircleModal: React.FC<CircleModalProps> = ({isOpen, onClose, targetUrl}) =
           <div className="mb-4">
             <h4 className="text-sm font-medium text-gray-600">도시 선택</h4>
             <div className="grid grid-cols-4 gap-4 mt-2">
-              {City.map(city => (
-                <label key={city.value} className="flex items-center space-x-2">
+              {Object.entries(City).map(([key, label]) => (
+                <label key={key} className="flex items-center space-x-2">
                   <input
                     type="radio"
-                    value={city.value}
-                    checked={selectedCity === city.value}
+                    value={key}
+                    checked={selectedCity === key}
                     onChange={e => setSelectedCity(e.target.value)}
                     className="form-radio"
                   />
-                  <span>{city.label}</span>
+                  <span>{label}</span>
                 </label>
               ))}
             </div>
@@ -102,16 +75,16 @@ const CircleModal: React.FC<CircleModalProps> = ({isOpen, onClose, targetUrl}) =
           <div className="mb-4">
             <h4 className="text-sm font-medium text-gray-600">영어 레벨 선택</h4>
             <div className="grid grid-cols-2 gap-4 mt-2">
-              {EnglishLevel.map(level => (
-                <label key={level.value} className="flex items-center space-x-2">
+              {Object.entries(EnglishLevel).map(([key, value]) => (
+                <label key={key} className="flex items-center space-x-2">
                   <input
                     type="radio"
-                    value={level.value}
-                    checked={selectedLevel === level.value}
+                    value={key}
+                    checked={selectedLevel === key}
                     onChange={e => setSelectedLevel(e.target.value)}
                     className="form-radio"
                   />
-                  <span>{level.label}</span>
+                  <span>{value}</span>
                 </label>
               ))}
             </div>

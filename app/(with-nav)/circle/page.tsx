@@ -98,7 +98,7 @@ const CircleListPage: NextPage = () => {
             englishLevel={circle.englishLevel}
             city={circle.city}
             thumbnailUrl={circle.thumbnailUrl}
-            introduction={circle.introduction}
+            title={circle.title}
             capacity={circle.capacity}
             totalView={circle.totalView || 0}
             leaderName={circle.leaderName}

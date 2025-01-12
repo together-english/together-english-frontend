@@ -4,7 +4,7 @@ type TCircle = {
   englishLevel: string
   city: string
   thumbnailUrl: string
-  introduction: string
+  title: string
   capacity: number
   totalView: number
   leaderName: string

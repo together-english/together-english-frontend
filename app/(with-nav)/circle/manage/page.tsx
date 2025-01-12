@@ -8,7 +8,7 @@ import ErrorModal from '@/components/modal/ErrorModal'
 import InfoModal from '@/components/modal/InfoModal'
 import {postWithJwt} from '@/server'
 import {TCircleCreateRequest, TCircleSchedule} from '@/types/circle'
-import {StatusEnum} from '@/types/status'
+import {City, StatusEnum} from '@/types/status'
 
 const CircleCreatePage: NextPage = () => {
   const [formData, setFormData] = useState<TCircleCreateRequest>({
@@ -22,24 +22,6 @@ const CircleCreatePage: NextPage = () => {
     contactWay: '',
     circleSchedules: [{dayOfWeek: '', startTime: '', endTime: ''}]
   })
-
-  const City = [
-    {value: 'GANGNAM', label: '강남'},
-    {value: 'SINCHON', label: '신촌'},
-    {value: 'HONGDAE', label: '홍대'},
-    {value: 'KONDAE', label: '건대'},
-    {value: 'SINRIM', label: '신림'},
-    {value: 'SUWON', label: '수원'},
-    {value: 'PANGYO', label: '판교'},
-    {value: 'INCHEON', label: '인천'},
-    {value: 'DAEJEON', label: '대전'},
-    {value: 'DAEGU', label: '대구'},
-    {value: 'ULSAN', label: '울산'},
-    {value: 'CHANGWON', label: '창원'},
-    {value: 'BUSAN', label: '부산'},
-    {value: 'ETC', label: '기타'},
-    {value: 'ONLINE', label: '온라인'}
-  ]
 
   const addScheduleField = (index: number) => {
     setFormData(prev => {
@@ -232,9 +214,9 @@ const CircleCreatePage: NextPage = () => {
                 className={commonInputClasses}
                 required>
                 <option value="">도시 선택</option>
-                {City.map(city => (
-                  <option key={city.value} value={city.value}>
-                    {city.label}
+                {Object.entries(City).map(([key, value]) => (
+                  <option key={key} value={key}>
+                    {value}
                   </option>
                 ))}
               </select>
