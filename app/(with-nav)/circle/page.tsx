@@ -11,6 +11,8 @@ import {useAuth} from '@/contexts'
 import LoginModal from '@/components/modal/LoginModal'
 import {post, postWithJwt} from '@/server'
 import {City, StatusEnum} from '@/types/status'
+import * as U from '@/utils'
+import {TSignInResponse} from '@/types/auth'
 
 const CircleListPage: NextPage = () => {
   const router = useRouter()
@@ -26,50 +28,43 @@ const CircleListPage: NextPage = () => {
   }
 
   const fetchCircles = useCallback(
-    (page: number) => {
+    async (page: number) => {
       setCurrentPage(page)
+      let memberId = null
+      const signInResponse = await U.readObjectP<TSignInResponse>('signInResponse')
       if (signInResponse) {
-        // todo: 내가 좋아요 누른 정보도 포함한 API 호출 하도록 변경 필요
-        post(`/circle/list?page=${page - 1}`, {})
-          .then(res => res.json())
-          .then((result: TApiResponse<TPaginatedData<TCircle>>) => {
-            if (result.status === StatusEnum.SUCCESS && result.data) {
-              if (result.data.content) {
-                const updatedContent = result.data.content.map(item => {
-                  const cityValue = City[item.city as keyof typeof City] || 'etc'
-                  return {
-                    ...item,
-                    city: cityValue
-                  }
-                })
-                setCircles(updatedContent)
-                setTotalPages(result.data.totalPages)
-              }
-            } else {
-              // todo: 에러 처리
-            }
-          })
-      } else {
-        postWithJwt(`/circle/list?page=${page - 1}`, {})
-          .then(res => res.json())
-          .then((result: TApiResponse<TPaginatedData<TCircle>>) => {
-            if (result.status === StatusEnum.SUCCESS && result.data) {
-              if (result.data.content) {
-                setCircles(result.data.content)
-                setTotalPages(result.data.totalPages)
-              }
-            } else {
-              // todo: 에러 처리
-            }
-          })
+        memberId = signInResponse.memberDto.id
       }
+      post(`/circle/list?page=${page - 1}`, {memberId: memberId})
+        .then(res => res.json())
+        .then((result: TApiResponse<TPaginatedData<TCircle>>) => {
+          if (result.status === StatusEnum.SUCCESS && result.data) {
+            if (result.data.content) {
+              const updatedContent = result.data.content.map(item => {
+                const cityValue = City[item.city as keyof typeof City] || 'etc'
+                return {
+                  ...item,
+                  city: cityValue
+                }
+              })
+              setCircles(updatedContent)
+              setTotalPages(result.data.totalPages)
+            }
+          } else {
+            // todo: 에러 처리
+          }
+        })
     },
-    [signInResponse, currentPage]
+    [currentPage]
   )
+
+  const handlePageChange = (page: number) => {
+    fetchCircles(page)
+  }
 
   useEffect(() => {
     fetchCircles(1)
-  }, [signInResponse])
+  }, [])
 
   return (
     <div className="container mx-auto p-8">
@@ -123,7 +118,7 @@ const CircleListPage: NextPage = () => {
       <Pagination
         currentPage={currentPage} // 현재 페이지
         totalPages={totalPages} // 전체 페이지 수
-        onPageChange={page => fetchCircles(page)} // 페이지 변경 핸들러
+        onPageChange={page => handlePageChange(page)} // 페이지 변경 핸들러
       />
       <LoginModal show={showLoginModal} onClose={() => setShowLoginModal(false)} />
     </div>

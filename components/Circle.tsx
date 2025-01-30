@@ -4,6 +4,7 @@ import {useAuth} from '@/contexts'
 import LoginModal from './modal/LoginModal'
 import Image from 'next/image'
 import {useRouter} from 'next/navigation'
+import {postWithJwt, delWithJwt} from '@/server'
 
 const Circle: React.FC<TCircle> = ({
   id,
@@ -26,6 +27,11 @@ const Circle: React.FC<TCircle> = ({
 
   const handleLikeClick = () => {
     if (signInResponse) {
+      if (isLiked) {
+        delWithJwt(`/circle/${id}/favorites`)
+      } else {
+        postWithJwt(`/circle/${id}/favorites`, {})
+      }
       setIsLiked(!isLiked)
     } else {
       setShowLoginModal(true)
