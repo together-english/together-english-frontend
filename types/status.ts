@@ -22,9 +22,9 @@ export enum City {
 }
 
 export enum EnglishLevel {
-  BEGINNER = '기초적인 영어 실력',
-  INTERMEDIATE = '중간 수준의 영어 실력',
-  ADVANCED = '고급 영어 실력',
-  PROFICIENT = '숙련된 영어 실력',
-  NATIVE = '원어민 수준의 영어 실력'
+  BEGINNER = 'BEGINNER(기초)',
+  INTERMEDIATE = 'INTERMEDIATE(중간)',
+  ADVANCED = 'ADVANCED(고급)',
+  PROFICIENT = 'PROFICIENT(숙련된)',
+  NATIVE = 'NATIVE(원어민 수준)'
 }

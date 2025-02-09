@@ -3,13 +3,13 @@ import {NextPage} from 'next'
 import {useState, useEffect, useCallback} from 'react'
 import CircleModal from '@/components/modal/CircleModal'
 import Circle from '@/components/Circle'
-import {TCircle} from '@/types/circle'
+import {TCircle, TCirclePageRequest} from '@/types/circle'
 import {TApiResponse, TPaginatedData} from '@/types/common'
 import Pagination from '@/components/Pagination'
 import {useRouter} from 'next/navigation'
 import {useAuth} from '@/contexts'
 import LoginModal from '@/components/modal/LoginModal'
-import {post, postWithJwt} from '@/server'
+import {post} from '@/server'
 import {City, StatusEnum} from '@/types/status'
 import * as U from '@/utils'
 import {TSignInResponse} from '@/types/auth'
@@ -18,6 +18,13 @@ const CircleListPage: NextPage = () => {
   const router = useRouter()
   const {signInResponse} = useAuth()
   const [circles, setCircles] = useState<TCircle[]>([])
+  const [circlePageRequest, setCirclePageRequest] = useState<TCirclePageRequest>({
+    memberId: null,
+    title: null,
+    city: null,
+    level: null,
+    likeByMeOnly: false
+  })
   const [currentPage, setCurrentPage] = useState<number>(1)
   const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false)
   const [showLoginModal, setShowLoginModal] = useState(false)
@@ -28,14 +35,19 @@ const CircleListPage: NextPage = () => {
   }
 
   const fetchCircles = useCallback(
-    async (page: number) => {
+    async (page: number, newRequest: TCirclePageRequest) => {
       setCurrentPage(page)
-      let memberId = null
+      setCirclePageRequest(newRequest)
       const signInResponse = await U.readObjectP<TSignInResponse>('signInResponse')
       if (signInResponse) {
-        memberId = signInResponse.memberDto.id
+        setCirclePageRequest(prevState => ({
+          ...prevState,
+          memberId: signInResponse.memberDto.id
+        }))
+        newRequest.memberId = signInResponse.memberDto.id
       }
-      post(`/circle/list?page=${page - 1}`, {memberId: memberId})
+
+      post(`/circle/list?page=${page - 1}`, newRequest)
         .then(res => res.json())
         .then((result: TApiResponse<TPaginatedData<TCircle>>) => {
           if (result.status === StatusEnum.SUCCESS && result.data) {
@@ -55,15 +67,15 @@ const CircleListPage: NextPage = () => {
           }
         })
     },
-    [currentPage]
+    [currentPage, circlePageRequest]
   )
 
   const handlePageChange = (page: number) => {
-    fetchCircles(page)
+    fetchCircles(page, circlePageRequest)
   }
 
   useEffect(() => {
-    fetchCircles(1)
+    fetchCircles(1, circlePageRequest)
   }, [])
 
   return (
@@ -92,7 +104,8 @@ const CircleListPage: NextPage = () => {
       <CircleModal
         isOpen={isFilterOpen}
         onClose={() => setIsFilterOpen(false)}
-        targetUrl="/filtered-meetings" // 필터 적용 후 라우팅할 URL
+        request={circlePageRequest}
+        onApplyFilter={fetchCircles}
       />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

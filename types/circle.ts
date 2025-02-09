@@ -54,4 +54,18 @@ type TCircleCreateRequest = {
   circleSchedules: TCircleSchedule[]
 }
 
-export type {TCircle, TCircleDetail, TCircleSchedule, TCircleCreateRequest}
+type TCirclePageRequest = {
+  memberId: number | null
+  title: string | null
+  city: string | null
+  level: string | null
+  likeByMeOnly: boolean
+}
+
+export type {
+  TCircle,
+  TCircleDetail,
+  TCircleSchedule,
+  TCircleCreateRequest,
+  TCirclePageRequest
+}

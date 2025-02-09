@@ -1,27 +1,52 @@
-import React, {useState} from 'react'
-import {useRouter} from 'next/navigation'
+import React, {useEffect, useState} from 'react'
 import {Transition} from '@headlessui/react'
 import {City, EnglishLevel} from '@/types/status'
+import {TCirclePageRequest} from '@/types/circle'
 
 interface CircleModalProps {
   isOpen: boolean
   onClose: () => void
-  targetUrl: string
+  request: TCirclePageRequest
+  onApplyFilter: (page: number, newRequest: TCirclePageRequest) => void
 }
 
-const CircleModal: React.FC<CircleModalProps> = ({isOpen, onClose, targetUrl}) => {
-  const router = useRouter()
-  const [selectedCity, setSelectedCity] = useState<string>('')
-  const [selectedLevel, setSelectedLevel] = useState<string>('')
-  const [circleName, setCircleName] = useState<string>('')
+const CircleModal: React.FC<CircleModalProps> = ({
+  isOpen,
+  onClose,
+  request,
+  onApplyFilter
+}) => {
+  const [selectedCity, setSelectedCity] = useState<string | null>('')
+  const [selectedLevel, setSelectedLevel] = useState<string | null>('')
+  const [circleName, setCircleName] = useState<string | null>('')
+
+  useEffect(() => {
+    setSelectedCity(request.city)
+    setSelectedLevel(request.level)
+    setCircleName(request.title)
+  }, [request])
+
+  const handleResetFilter = () => {
+    onApplyFilter(1, {
+      memberId: request.memberId,
+      title: null,
+      city: null,
+      level: null,
+      likeByMeOnly: request.likeByMeOnly
+    })
+    onClose()
+  }
 
   const handleApplyFilter = () => {
-    const queryString = new URLSearchParams({
-      city: selectedCity || '',
-      level: selectedLevel || '',
-      name: circleName || ''
-    }).toString()
-    router.push(`${targetUrl}?${queryString}`)
+    const newRequest: TCirclePageRequest = {
+      memberId: request.memberId,
+      title: circleName,
+      city: selectedCity,
+      level: selectedLevel,
+      likeByMeOnly: request.likeByMeOnly
+    }
+
+    onApplyFilter(1, newRequest)
     onClose()
   }
 
@@ -45,7 +70,7 @@ const CircleModal: React.FC<CircleModalProps> = ({isOpen, onClose, targetUrl}) =
             <h4 className="text-sm font-medium text-gray-600 mb-2">영어모임 검색</h4>
             <input
               type="text"
-              value={circleName}
+              value={circleName || ''}
               onChange={e => setCircleName(e.target.value)}
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-600"
               placeholder="영어모임 이름을 입력하세요"
@@ -55,7 +80,7 @@ const CircleModal: React.FC<CircleModalProps> = ({isOpen, onClose, targetUrl}) =
           {/* 도시 필터 */}
           <div className="mb-4">
             <h4 className="text-sm font-medium text-gray-600">도시 선택</h4>
-            <div className="grid grid-cols-4 gap-4 mt-2">
+            <div className="  grid grid-cols-4 gap-4 mt-2">
               {Object.entries(City).map(([key, label]) => (
                 <label key={key} className="flex items-center space-x-2">
                   <input
@@ -95,11 +120,18 @@ const CircleModal: React.FC<CircleModalProps> = ({isOpen, onClose, targetUrl}) =
             <button onClick={onClose} className="text-gray-600 hover:text-gray-800">
               닫기
             </button>
-            <button
-              onClick={handleApplyFilter}
-              className="bg-cyan-600 text-white px-4 py-2 rounded-lg hover:bg-cyan-700 transition duration-300">
-              필터 적용
-            </button>
+            <div className="flex justify-between">
+              <button
+                onClick={handleResetFilter}
+                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300 mr-2">
+                초기화
+              </button>
+              <button
+                onClick={handleApplyFilter}
+                className="bg-cyan-600 text-white px-4 py-2 rounded-lg hover:bg-cyan-700 transition duration-300">
+                필터 적용
+              </button>
+            </div>
           </div>
         </div>
       </div>
