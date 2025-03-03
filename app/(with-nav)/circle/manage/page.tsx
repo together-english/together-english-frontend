@@ -22,6 +22,7 @@ const CircleCreatePage: NextPage = () => {
     contactWay: '',
     circleSchedules: [{dayOfWeek: '', startTime: '', endTime: ''}]
   })
+  const [imageFile, setImageFile] = useState<File | null>(null)
 
   const addScheduleField = (index: number) => {
     setFormData(prev => {
@@ -29,6 +30,24 @@ const CircleCreatePage: NextPage = () => {
       updatedSchedules.splice(index + 1, 0, {dayOfWeek: '', startTime: '', endTime: ''})
       return {...prev, circleSchedules: updatedSchedules}
     })
+  }
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        // 5MB 제한
+        handleError('이미지 크기는 5MB를 초과할 수 없습니다.')
+        return
+      }
+      if (!file.type.startsWith('image/')) {
+        handleError('이미지 파일만 업로드 가능합니다.')
+        return
+      }
+      setImageFile(file)
+    } else {
+      setImageFile(null)
+    }
   }
 
   const handleScheduleChange = (
@@ -121,6 +140,9 @@ const CircleCreatePage: NextPage = () => {
     if (!hasError) {
       console.log('FormData updated:', formData)
       const multipartData = new FormData()
+      if (imageFile) {
+        multipartData.append('thumbnailFile', imageFile)
+      }
       multipartData.append('request', JSON.stringify(formData))
       postWithJwt('/circle', multipartData)
         .then(res => res.json())
@@ -167,6 +189,18 @@ const CircleCreatePage: NextPage = () => {
           </h1>
 
           <form onSubmit={handleSubmit}>
+            <div className="mb-4">
+              <label htmlFor="circleImage" className={commonLabelClasses}>
+                영어 모임 썸네일
+              </label>
+              <input
+                id="circleImage"
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+                className={`${commonInputClasses} text-gray-900 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-cyan-50 file:text-cyan-700 hover:file:bg-cyan-100`}
+              />
+            </div>
             {/* 영어 모임 이름 */}
             <div className="mb-4">
               <InputField
