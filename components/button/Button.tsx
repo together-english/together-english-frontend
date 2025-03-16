@@ -3,7 +3,7 @@ type ButtonColors = 'red' | 'blue' | 'cyan' | 'green'
 
 type ButtonProps = {
   children: React.ReactNode
-  color?: ButtonColors // 버튼 색상
+  color?: ButtonColors
   onClick?: () => void
   type?: 'button' | 'submit' | 'reset'
   className?: string

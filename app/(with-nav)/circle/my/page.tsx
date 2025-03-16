@@ -24,7 +24,7 @@ const CircleListPage: NextPage = () => {
     city: null,
     level: null,
     likeByMeOnly: false,
-    writeByMeOnly: false
+    writeByMeOnly: true
   })
   const [currentPage, setCurrentPage] = useState<number>(1)
   const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false)
@@ -39,7 +39,6 @@ const CircleListPage: NextPage = () => {
     async (page: number, newRequest: TCirclePageRequest) => {
       setCurrentPage(page)
       setCirclePageRequest(newRequest)
-      const signInResponse = await U.readObjectP<TSignInResponse>('signInResponse')
       if (signInResponse) {
         setCirclePageRequest(prevState => ({
           ...prevState,
@@ -68,7 +67,7 @@ const CircleListPage: NextPage = () => {
           }
         })
     },
-    [currentPage, circlePageRequest]
+    [currentPage, circlePageRequest, signInResponse]
   )
 
   const handlePageChange = (page: number) => {
@@ -77,7 +76,7 @@ const CircleListPage: NextPage = () => {
 
   useEffect(() => {
     fetchCircles(1, circlePageRequest)
-  }, [])
+  }, [signInResponse])
 
   return (
     <div className="container mx-auto p-8">

@@ -20,8 +20,8 @@ const navigation = [
 ]
 
 const userOptions = [
-  {name: '내가 찜한 모임', value: 'favoriteGroups'},
-  {name: '내가 만든 모임', value: 'myGroups'},
+  {name: '내가 찜한 모임', value: 'circle/favorite'},
+  {name: '내가 만든 모임', value: 'circle/my'},
   {name: '마이 페이지', value: 'mypage'},
   {name: '로그아웃', value: 'logout'}
 ]

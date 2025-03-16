@@ -60,6 +60,7 @@ type TCirclePageRequest = {
   city: string | null
   level: string | null
   likeByMeOnly: boolean
+  writeByMeOnly: boolean
 }
 
 export type {

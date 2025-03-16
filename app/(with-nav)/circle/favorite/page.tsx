@@ -23,7 +23,7 @@ const CircleListPage: NextPage = () => {
     title: null,
     city: null,
     level: null,
-    likeByMeOnly: false,
+    likeByMeOnly: true,
     writeByMeOnly: false
   })
   const [currentPage, setCurrentPage] = useState<number>(1)

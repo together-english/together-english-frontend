@@ -1,21 +1,28 @@
 'use client'
 import {NextPage} from 'next'
 import Image from 'next/image'
-import {useParams} from 'next/navigation'
+import {useParams, useRouter} from 'next/navigation'
 import {useState, useEffect} from 'react'
 import {get} from '@/server'
 import {TCircleDetail, TCircleSchedule} from '@/types/circle'
 import {TApiResponse} from '@/types/common'
 import {City, StatusEnum} from '@/types/status'
+import Button from '@/components/button/Button'
+import {useAuth} from '@/contexts'
 
 const CircleDetailPage: NextPage = () => {
   const {id} = useParams()
   const [circleDetail, setCircleDetail] = useState<TCircleDetail | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-
+  const {signInResponse} = useAuth()
+  const [canEdit, setCanEdit] = useState(false)
+  const router = useRouter()
   const getCityValue = (key: string): string | 'etc' => {
     return City[key as keyof typeof City]
+  }
+  const handleEditClick = () => {
+    router.push(`/circle/manage?id=${id}`)
   }
 
   useEffect(() => {
@@ -31,8 +38,17 @@ const CircleDetailPage: NextPage = () => {
           console.error('Failed to fetch circle details:', result.message)
           setError('서클 정보를 불러오는 데 실패했습니다.')
         }
+        return result
       })
-  }, [id])
+      .then((result: TApiResponse<TCircleDetail>) => {
+        if (signInResponse?.memberDto.nickname == result.data?.leaderName) {
+          setCanEdit(true)
+        }
+        console.log(canEdit)
+        console.log(signInResponse?.memberDto.nickname)
+        console.log(result.data?.leaderName)
+      })
+  }, [id, signInResponse])
 
   if (loading) {
     return <div>Loading...</div>
@@ -72,6 +88,13 @@ const CircleDetailPage: NextPage = () => {
                 <h2 className="text-3xl font-bold text-gray-800">{circleDetail.title}</h2>
                 <p className="text-gray-600">리더: {circleDetail.leaderName}</p>
               </div>
+              {canEdit && (
+                <div className="ml-5 flex gap-2">
+                  <Button color="green" onClick={handleEditClick}>
+                    수정하기
+                  </Button>
+                </div>
+              )}
             </div>
 
             {/* 서클 소개 */}
