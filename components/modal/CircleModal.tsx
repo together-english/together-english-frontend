@@ -32,7 +32,8 @@ const CircleModal: React.FC<CircleModalProps> = ({
       title: null,
       city: null,
       level: null,
-      likeByMeOnly: request.likeByMeOnly
+      likeByMeOnly: request.likeByMeOnly,
+      writeByMeOnly: request.writeByMeOnly
     })
     onClose()
   }
@@ -43,7 +44,8 @@ const CircleModal: React.FC<CircleModalProps> = ({
       title: circleName,
       city: selectedCity,
       level: selectedLevel,
-      likeByMeOnly: request.likeByMeOnly
+      likeByMeOnly: request.likeByMeOnly,
+      writeByMeOnly: request.writeByMeOnly
     }
 
     onApplyFilter(1, newRequest)
