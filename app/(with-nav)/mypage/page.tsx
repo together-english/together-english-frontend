@@ -23,8 +23,6 @@ export default function MyPage() {
     isMarketingAgreed: false
   })
 
-  const [previewImage, setPreviewImage] = useState<string | null>(null)
-
   // 파일 입력 요소의 ref 설정
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -64,26 +62,20 @@ export default function MyPage() {
         const formData = new FormData()
         const reader = new FileReader()
         formData.append('file', file)
-        reader.onload = () => {
-          setPreviewImage(reader.result as string) // 미리보기 이미지 설정
-        }
 
         postWithJwt('/member/profile', formData)
           .then(res => res.json())
           .then((result: {status: string; data?: string; message: string}) => {
             if (result.status === StatusEnum.SUCCESS && result.data) {
+              setProfile(prevProfile => ({
+                ...prevProfile,
+                profileImage: result.data
+              }))
               updateProfileImage(result.data)
             } else {
               alert(result.message)
             }
           })
-
-        reader.readAsDataURL(file)
-
-        setProfile(prevProfile => ({
-          ...prevProfile,
-          profileImage: file.name // 파일명을 저장, 서버에 전송할 수 있습니다
-        }))
       }
     },
     [updateProfileImage]
@@ -152,9 +144,7 @@ export default function MyPage() {
             <div className="mt-2 flex justify-center">
               <div className="mt-2 flex justify-center">
                 <Image
-                  src={
-                    previewImage || profile.profileImage || '/images/defaultProfile.png'
-                  }
+                  src={profile.profileImage || '/images/defaultProfile.png'}
                   width={150}
                   height={150}
                   alt="프로필 미리보기"
