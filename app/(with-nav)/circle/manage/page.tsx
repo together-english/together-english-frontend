@@ -1,16 +1,19 @@
 'use client'
 import {NextPage} from 'next'
-import {useState} from 'react'
+import {useState, useEffect} from 'react'
+import {useSearchParams} from 'next/navigation'
+import {get, putWithJwt, postWithJwt, delWithJwt} from '@/server'
 import {Transition} from '@headlessui/react'
 import InputField from '@/components/input/InputField'
 import Button from '@/components/button/Button'
 import ErrorModal from '@/components/modal/ErrorModal'
 import InfoModal from '@/components/modal/InfoModal'
-import {postWithJwt} from '@/server'
-import {TCircleCreateRequest, TCircleSchedule} from '@/types/circle'
+import {TCircleCreateRequest, TCircleDetail, TCircleSchedule} from '@/types/circle'
 import {City, StatusEnum} from '@/types/status'
+import {TApiResponse} from '@/types/common'
 
 const CircleCreatePage: NextPage = () => {
+  const searchParams = useSearchParams()
   const [formData, setFormData] = useState<TCircleCreateRequest>({
     title: '',
     englishLevel: '',
@@ -23,6 +26,73 @@ const CircleCreatePage: NextPage = () => {
     circleSchedules: [{dayOfWeek: '', startTime: '', endTime: ''}]
   })
   const [imageFile, setImageFile] = useState<File | null>(null)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [circleId, setCircleId] = useState<string | null>(null)
+  const [thumbnailUrl, setThumbnailUrl] = useState<string | null>(null)
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+
+  useEffect(() => {
+    const id = searchParams.get('id')
+    if (id) {
+      setCircleId(id)
+      setIsLoading(true)
+      get(`/circle/detail/${id}`)
+        .then(res => res.json())
+        .then((result: TApiResponse<TCircleDetail>) => {
+          if (result.status === StatusEnum.SUCCESS && result.data) {
+            console.log(result)
+            const {data} = result
+            setFormData({
+              title: data.title || '',
+              englishLevel: data.englishLevel || '',
+              city: data.city || '',
+              introduction: data.introduction || '',
+              capacity: data.capacity || 10,
+              circleStatus: data.circleStatus || 'ACTIVE',
+              attendMode: data.attendMode || 'OFFLINE',
+              contactWay: data.contactWay || '',
+              address: data.address || '',
+              onlineUrl: data.onlineUrl || '',
+              circleSchedules: data.circleSchedules?.length
+                ? data.circleSchedules.map(schedule => ({
+                    dayOfWeek: schedule.dayOfWeek || '',
+                    startTime: schedule.startTime || '',
+                    endTime: schedule.endTime || ''
+                  }))
+                : [{dayOfWeek: '', startTime: '', endTime: ''}]
+            })
+            if (data.thumbnail) {
+              setThumbnailUrl(data.thumbnail)
+              setPreviewUrl(data.thumbnail)
+            }
+          } else {
+            handleError('영어 모임 정보를 불러오지 못했습니다.')
+            setTimeout(() => {
+              window.history.back()
+            }, 2000)
+          }
+        })
+        .catch(() => {
+          handleError('서버 오류가 발생했습니다.')
+          setTimeout(() => {
+            window.history.back()
+          }, 2000)
+        })
+        .finally(() => {
+          setIsLoading(false)
+        })
+    }
+  }, [searchParams])
+
+  useEffect(() => {
+    if (imageFile) {
+      const url = URL.createObjectURL(imageFile)
+      setPreviewUrl(url)
+      return () => URL.revokeObjectURL(url) // 메모리 누수 방지
+    } else {
+      setPreviewUrl(thumbnailUrl) // imageFile이 없으면 서버 URL로 복구
+    }
+  }, [imageFile, thumbnailUrl])
 
   const addScheduleField = (index: number) => {
     setFormData(prev => {
@@ -35,9 +105,9 @@ const CircleCreatePage: NextPage = () => {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
-      if (file.size > 5 * 1024 * 1024) {
-        // 5MB 제한
-        handleError('이미지 크기는 5MB를 초과할 수 없습니다.')
+      if (file.size > 3 * 1024 * 1024) {
+        // 3MB 제한
+        handleError('이미지 크기는 3MB를 초과할 수 없습니다.')
         return
       }
       if (!file.type.startsWith('image/')) {
@@ -144,15 +214,27 @@ const CircleCreatePage: NextPage = () => {
         multipartData.append('thumbnailFile', imageFile)
       }
       multipartData.append('request', JSON.stringify(formData))
-      postWithJwt('/circle', multipartData)
-        .then(res => res.json())
-        .then((result: {status: string; data?: string; message: string}) => {
-          if (result.status === StatusEnum.SUCCESS && result.data) {
-            handleInfoModal('영어 모임 생성에 성공했습니다.')
-          } else {
-            handleError(result.message)
-          }
-        })
+      if (circleId) {
+        putWithJwt(`/circle/${circleId}`, multipartData)
+          .then(res => res.json())
+          .then((result: {status: string; message: string}) => {
+            if (result.status === StatusEnum.SUCCESS) {
+              handleInfoModal('영어 모임 수정에 성공했습니다.')
+            } else {
+              handleError(result.message)
+            }
+          })
+      } else {
+        postWithJwt('/circle', multipartData)
+          .then(res => res.json())
+          .then((result: {status: string; data?: string; message: string}) => {
+            if (result.status === StatusEnum.SUCCESS && result.data) {
+              handleInfoModal('영어 모임 생성에 성공했습니다.')
+            } else {
+              handleError(result.message)
+            }
+          })
+      }
     }
   }
 
@@ -162,6 +244,15 @@ const CircleCreatePage: NextPage = () => {
 
   const handleDeleteCircle = () => {
     console.log('영어 모임 삭제됨')
+    delWithJwt(`/circle/${circleId}`)
+      .then(res => res.json())
+      .then((result: {status: string; message: string}) => {
+        if (result.status === StatusEnum.SUCCESS) {
+          handleInfoModal('영어 모임 삭제에 성공했습니다.')
+        } else {
+          handleError(result.message)
+        }
+      })
     setIsDeleteModalOpen(false)
   }
   const commonLabelClasses = 'block text-sm font-semibold leading-6 text-gray-900'
@@ -193,6 +284,15 @@ const CircleCreatePage: NextPage = () => {
               <label htmlFor="circleImage" className={commonLabelClasses}>
                 영어 모임 썸네일
               </label>
+              {previewUrl && (
+                <div className="mb-2">
+                  <img
+                    src={previewUrl}
+                    alt="썸네일 미리보기"
+                    className="w-32 h-32 object-cover rounded-md"
+                  />
+                </div>
+              )}
               <input
                 id="circleImage"
                 type="file"
@@ -405,10 +505,15 @@ const CircleCreatePage: NextPage = () => {
             </div>
 
             {/* 제출 및 삭제 버튼 */}
-            <div className="flex justify-between">
+            <div className="flex justify-between mt-6">
               <Button color="cyan" onClick={handleSubmit}>
-                영어 모임 만들기
+                {circleId ? '수정하기' : '영어 모임 만들기'}
               </Button>
+              {circleId && (
+                <Button color="red" onClick={() => setIsDeleteModalOpen(true)}>
+                  삭제하기
+                </Button>
+              )}
             </div>
           </form>
         </div>
