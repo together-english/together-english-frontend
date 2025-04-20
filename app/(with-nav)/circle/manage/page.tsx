@@ -12,7 +12,7 @@ import {TCircleCreateRequest, TCircleDetail, TCircleSchedule} from '@/types/circ
 import {City, StatusEnum} from '@/types/status'
 import {TApiResponse} from '@/types/common'
 
-const CircleCreatePage: NextPage = () => {
+function CircleCreatePage() {
   const searchParams = useSearchParams()
   const [formData, setFormData] = useState<TCircleCreateRequest>({
     title: '',
@@ -260,301 +260,303 @@ const CircleCreatePage: NextPage = () => {
     'mt-1 w-full p-2 border rounded-md shadow-sm text-gray-900 bg-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-600 focus-visible:ring-2 focus-visible:ring-cyan-600 ring-2 ring-gray-300'
 
   return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <div className="container mx-auto p-8">
-        <div className="max-w-4xl mx-auto">
-          <div className="bg-white shadow-xl rounded-lg p-6">
-            <ErrorModal
-              show={showErrorModal}
-              onClose={() => setShowErrorModal(false)}
-              message={errorMessage}
-            />
-            <InfoModal
-              show={showInfoModal}
-              onClose={() => setShowInfoModal(false)}
-              onConfirm={moveToCirclePage}
-              message={InfoMessage}
-            />
+    <div className="container mx-auto p-8">
+      <div className="max-w-4xl mx-auto">
+        <div className="bg-white shadow-xl rounded-lg p-6">
+          <ErrorModal
+            show={showErrorModal}
+            onClose={() => setShowErrorModal(false)}
+            message={errorMessage}
+          />
+          <InfoModal
+            show={showInfoModal}
+            onClose={() => setShowInfoModal(false)}
+            onConfirm={moveToCirclePage}
+            message={InfoMessage}
+          />
 
-            <h1 className="text-3xl font-bold text-gray-800 mb-6">
-              영어 모임 생성 및 관리
-            </h1>
+          <h1 className="text-3xl font-bold text-gray-800 mb-6">
+            영어 모임 생성 및 관리
+          </h1>
 
-            <form onSubmit={handleSubmit}>
-              <div className="mb-4">
-                <label htmlFor="circleImage" className={commonLabelClasses}>
-                  영어 모임 썸네일
-                </label>
-                {previewUrl && (
-                  <div className="mb-2">
-                    <img
-                      src={previewUrl}
-                      alt="썸네일 미리보기"
-                      className="w-32 h-32 object-cover rounded-md"
-                    />
-                  </div>
-                )}
-                <input
-                  id="circleImage"
-                  type="file"
-                  accept="image/*"
-                  onChange={handleFileChange}
-                  className={`${commonInputClasses} text-gray-900 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-cyan-50 file:text-cyan-700 hover:file:bg-cyan-100`}
-                />
-              </div>
-              {/* 영어 모임 이름 */}
-              <div className="mb-4">
-                <InputField
-                  id="title"
-                  label="영어 모임 이름"
-                  type="text"
-                  value={formData.title}
-                  onChange={handleInputChange('title')}
-                  required
-                  placeholder="영어 모임 이름을 입력하세요"
-                />
-              </div>
-
-              {/* 영어 레벨 */}
-              <div className="mb-4">
-                <label htmlFor="english_level" className={commonLabelClasses}>
-                  영어 레벨
-                </label>
-                <select
-                  id="english_level"
-                  name="english_level"
-                  value={formData.englishLevel}
-                  onChange={handleInputChange('englishLevel')}
-                  className={commonInputClasses}
-                  required>
-                  <option value="">레벨 선택</option>
-                  <option value="BEGINNER">초급</option>
-                  <option value="INTERMEDIATE">중급</option>
-                  <option value="ADVANCED">고급</option>
-                  <option value="PROFICIENT">숙련</option>
-                  <option value="NATIVE">원어민 수준</option>
-                </select>
-              </div>
-
-              {/* 도시 */}
-              <div className="mb-4">
-                <label htmlFor="city" className={commonLabelClasses}>
-                  도시
-                </label>
-                <select
-                  id="city"
-                  name="city"
-                  value={formData.city}
-                  onChange={handleInputChange('city')}
-                  className={commonInputClasses}
-                  required>
-                  <option value="">도시 선택</option>
-                  {Object.entries(City).map(([key, value]) => (
-                    <option key={key} value={key}>
-                      {value}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* 영어 모임 소개 */}
-              <div className="mb-4">
-                <label htmlFor="introduction" className={commonLabelClasses}>
-                  영어 모임 소개
-                </label>
-                <textarea
-                  id="introduction"
-                  name="introduction"
-                  value={formData.introduction}
-                  onChange={handleInputChange('introduction')}
-                  className={`${commonInputClasses} resize-none`}
-                  placeholder="영어 모임을 소개해주세요"
-                  rows={4}
-                  required
-                />
-              </div>
-
-              {/* 정원 */}
-              <div className="mb-4">
-                <InputField
-                  id="capacity"
-                  label="정원"
-                  type="number"
-                  value={formData.capacity.toString()}
-                  onChange={handleInputChange('capacity')}
-                  required
-                  placeholder="정원을 입력하세요"
-                />
-              </div>
-
-              {/* 참여 방식 */}
-              <div className="mb-4">
-                <label htmlFor="attend_mode" className={commonLabelClasses}>
-                  참여 방식
-                </label>
-                <select
-                  id="attend_mode"
-                  name="attend_mode"
-                  value={formData.attendMode}
-                  onChange={handleInputChange('attendMode')}
-                  className={commonInputClasses}
-                  required>
-                  <option value="ONLINE">온라인</option>
-                  <option value="OFFLINE">오프라인</option>
-                </select>
-              </div>
-
-              {/* 오프라인일 경우 주소 입력 */}
-              {formData.attendMode === 'OFFLINE' && (
-                <div className="mb-4">
-                  <InputField
-                    id="address"
-                    label="주소"
-                    type="text"
-                    value={formData.address || ''}
-                    onChange={handleInputChange('address')}
-                    required
-                    placeholder="오프라인 모임 장소의 주소를 입력하세요"
+          <form onSubmit={handleSubmit}>
+            <div className="mb-4">
+              <label htmlFor="circleImage" className={commonLabelClasses}>
+                영어 모임 썸네일
+              </label>
+              {previewUrl && (
+                <div className="mb-2">
+                  <img
+                    src={previewUrl}
+                    alt="썸네일 미리보기"
+                    className="w-32 h-32 object-cover rounded-md"
                   />
                 </div>
               )}
+              <input
+                id="circleImage"
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+                className={`${commonInputClasses} text-gray-900 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-cyan-50 file:text-cyan-700 hover:file:bg-cyan-100`}
+              />
+            </div>
+            {/* 영어 모임 이름 */}
+            <div className="mb-4">
+              <InputField
+                id="title"
+                label="영어 모임 이름"
+                type="text"
+                value={formData.title}
+                onChange={handleInputChange('title')}
+                required
+                placeholder="영어 모임 이름을 입력하세요"
+              />
+            </div>
 
-              {/* 온라인일 경우 URL 입력 */}
-              {formData.attendMode === 'ONLINE' && (
-                <div className="mb-4">
-                  <InputField
-                    id="online_url"
-                    label="온라인 URL"
-                    type="url"
-                    value={formData.onlineUrl || ''}
-                    onChange={handleInputChange('onlineUrl')}
-                    required
-                    placeholder="온라인 참여 링크를 입력하세요"
-                  />
-                </div>
-              )}
+            {/* 영어 레벨 */}
+            <div className="mb-4">
+              <label htmlFor="english_level" className={commonLabelClasses}>
+                영어 레벨
+              </label>
+              <select
+                id="english_level"
+                name="english_level"
+                value={formData.englishLevel}
+                onChange={handleInputChange('englishLevel')}
+                className={commonInputClasses}
+                required>
+                <option value="">레벨 선택</option>
+                <option value="BEGINNER">초급</option>
+                <option value="INTERMEDIATE">중급</option>
+                <option value="ADVANCED">고급</option>
+                <option value="PROFICIENT">숙련</option>
+                <option value="NATIVE">원어민 수준</option>
+              </select>
+            </div>
 
-              {/* 연락 방법 */}
-              <div className="mb-4">
-                <InputField
-                  id="contact_way"
-                  label="연락 방법"
-                  type="text"
-                  value={formData.contactWay}
-                  onChange={handleInputChange('contactWay')}
-                  required
-                  placeholder="카카오톡 오픈 채팅, 이메일 등"
-                />
-              </div>
-
-              {/* 일정 필드 */}
-              <div className="mt-6">
-                <h3 className="text-xl font-semibold mb-2">일정</h3>
-                {formData.circleSchedules.map((schedule, index) => (
-                  <div key={index} className="mb-4 flex items-center space-x-4">
-                    <div className="w-1/3">
-                      <label className={commonLabelClasses}>요일</label>
-                      <select
-                        value={schedule.dayOfWeek}
-                        onChange={e =>
-                          handleScheduleChange(index, 'dayOfWeek', e.target.value)
-                        }
-                        className={commonInputClasses}>
-                        <option value="">요일 선택</option>
-                        <option value="MONDAY">월요일</option>
-                        <option value="TUESDAY">화요일</option>
-                        <option value="WEDNESDAY">수요일</option>
-                        <option value="THURSDAY">목요일</option>
-                        <option value="FRIDAY">금요일</option>
-                        <option value="SATURDAY">토요일</option>
-                        <option value="SUNDAY">일요일</option>
-                      </select>
-                    </div>
-                    <InputField
-                      id={`startTime-${index}`}
-                      label="시작 시간"
-                      type="time"
-                      value={schedule.startTime}
-                      onChange={e =>
-                        handleScheduleChange(index, 'startTime', e.target.value)
-                      }
-                    />
-                    <InputField
-                      id={`endTime-${index}`}
-                      label="종료 시간"
-                      type="time"
-                      value={schedule.endTime}
-                      onChange={e =>
-                        handleScheduleChange(index, 'endTime', e.target.value)
-                      }
-                    />
-                    {/* 삭제 및 추가 버튼 */}
-                    <div className="flex space-x-2 mt-5">
-                      <button
-                        type="button"
-                        onClick={() => removeScheduleField(index)}
-                        className="text-red-500 hover:text-red-700">
-                        삭제
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => addScheduleField(index)}
-                        className="text-cyan-500 hover:text-cyan-700">
-                        + 추가
-                      </button>
-                    </div>
-                  </div>
+            {/* 도시 */}
+            <div className="mb-4">
+              <label htmlFor="city" className={commonLabelClasses}>
+                도시
+              </label>
+              <select
+                id="city"
+                name="city"
+                value={formData.city}
+                onChange={handleInputChange('city')}
+                className={commonInputClasses}
+                required>
+                <option value="">도시 선택</option>
+                {Object.entries(City).map(([key, value]) => (
+                  <option key={key} value={key}>
+                    {value}
+                  </option>
                 ))}
-              </div>
+              </select>
+            </div>
 
-              {/* 제출 및 삭제 버튼 */}
-              <div className="flex justify-between mt-6">
-                <Button color="cyan" onClick={handleSubmit}>
-                  {circleId ? '수정하기' : '영어 모임 만들기'}
-                </Button>
-                {circleId && (
-                  <Button color="red" onClick={() => setIsDeleteModalOpen(true)}>
-                    삭제하기
-                  </Button>
-                )}
-              </div>
-            </form>
-          </div>
-        </div>
+            {/* 영어 모임 소개 */}
+            <div className="mb-4">
+              <label htmlFor="introduction" className={commonLabelClasses}>
+                영어 모임 소개
+              </label>
+              <textarea
+                id="introduction"
+                name="introduction"
+                value={formData.introduction}
+                onChange={handleInputChange('introduction')}
+                className={`${commonInputClasses} resize-none`}
+                placeholder="영어 모임을 소개해주세요"
+                rows={4}
+                required
+              />
+            </div>
 
-        {/* 영어 모임 삭제 확인 모달 */}
-        <Transition
-          show={isDeleteModalOpen}
-          enter="transition-opacity duration-300"
-          enterFrom="opacity-0"
-          enterTo="opacity-100"
-          leave="transition-opacity duration-300"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0">
-          <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center">
-            <div className="bg-white p-6 rounded-lg shadow-xl">
-              <h3 className="text-xl font-semibold text-gray-800">
-                정말 영어 모임을 삭제하시겠습니까?
-              </h3>
-              <p className="text-gray-600 mt-2">삭제한 영어 모임은 복구할 수 없습니다.</p>
-              <div className="mt-6 flex justify-between">
-                <button
-                  onClick={() => setIsDeleteModalOpen(false)}
-                  className="text-gray-700 hover:text-gray-900">
-                  취소
-                </button>
-                <button
-                  onClick={handleDeleteCircle}
-                  className="bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600">
+            {/* 정원 */}
+            <div className="mb-4">
+              <InputField
+                id="capacity"
+                label="정원"
+                type="number"
+                value={formData.capacity.toString()}
+                onChange={handleInputChange('capacity')}
+                required
+                placeholder="정원을 입력하세요"
+              />
+            </div>
+
+            {/* 참여 방식 */}
+            <div className="mb-4">
+              <label htmlFor="attend_mode" className={commonLabelClasses}>
+                참여 방식
+              </label>
+              <select
+                id="attend_mode"
+                name="attend_mode"
+                value={formData.attendMode}
+                onChange={handleInputChange('attendMode')}
+                className={commonInputClasses}
+                required>
+                <option value="ONLINE">온라인</option>
+                <option value="OFFLINE">오프라인</option>
+              </select>
+            </div>
+
+            {/* 오프라인일 경우 주소 입력 */}
+            {formData.attendMode === 'OFFLINE' && (
+              <div className="mb-4">
+                <InputField
+                  id="address"
+                  label="주소"
+                  type="text"
+                  value={formData.address || ''}
+                  onChange={handleInputChange('address')}
+                  required
+                  placeholder="오프라인 모임 장소의 주소를 입력하세요"
+                />
+              </div>
+            )}
+
+            {/* 온라인일 경우 URL 입력 */}
+            {formData.attendMode === 'ONLINE' && (
+              <div className="mb-4">
+                <InputField
+                  id="online_url"
+                  label="온라인 URL"
+                  type="url"
+                  value={formData.onlineUrl || ''}
+                  onChange={handleInputChange('onlineUrl')}
+                  required
+                  placeholder="온라인 참여 링크를 입력하세요"
+                />
+              </div>
+            )}
+
+            {/* 연락 방법 */}
+            <div className="mb-4">
+              <InputField
+                id="contact_way"
+                label="연락 방법"
+                type="text"
+                value={formData.contactWay}
+                onChange={handleInputChange('contactWay')}
+                required
+                placeholder="카카오톡 오픈 채팅, 이메일 등"
+              />
+            </div>
+
+            {/* 일정 필드 */}
+            <div className="mt-6">
+              <h3 className="text-xl font-semibold mb-2">일정</h3>
+              {formData.circleSchedules.map((schedule, index) => (
+                <div key={index} className="mb-4 flex items-center space-x-4">
+                  <div className="w-1/3">
+                    <label className={commonLabelClasses}>요일</label>
+                    <select
+                      value={schedule.dayOfWeek}
+                      onChange={e =>
+                        handleScheduleChange(index, 'dayOfWeek', e.target.value)
+                      }
+                      className={commonInputClasses}>
+                      <option value="">요일 선택</option>
+                      <option value="MONDAY">월요일</option>
+                      <option value="TUESDAY">화요일</option>
+                      <option value="WEDNESDAY">수요일</option>
+                      <option value="THURSDAY">목요일</option>
+                      <option value="FRIDAY">금요일</option>
+                      <option value="SATURDAY">토요일</option>
+                      <option value="SUNDAY">일요일</option>
+                    </select>
+                  </div>
+                  <InputField
+                    id={`startTime-${index}`}
+                    label="시작 시간"
+                    type="time"
+                    value={schedule.startTime}
+                    onChange={e =>
+                      handleScheduleChange(index, 'startTime', e.target.value)
+                    }
+                  />
+                  <InputField
+                    id={`endTime-${index}`}
+                    label="종료 시간"
+                    type="time"
+                    value={schedule.endTime}
+                    onChange={e => handleScheduleChange(index, 'endTime', e.target.value)}
+                  />
+                  {/* 삭제 및 추가 버튼 */}
+                  <div className="flex space-x-2 mt-5">
+                    <button
+                      type="button"
+                      onClick={() => removeScheduleField(index)}
+                      className="text-red-500 hover:text-red-700">
+                      삭제
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => addScheduleField(index)}
+                      className="text-cyan-500 hover:text-cyan-700">
+                      + 추가
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* 제출 및 삭제 버튼 */}
+            <div className="flex justify-between mt-6">
+              <Button color="cyan" onClick={handleSubmit}>
+                {circleId ? '수정하기' : '영어 모임 만들기'}
+              </Button>
+              {circleId && (
+                <Button color="red" onClick={() => setIsDeleteModalOpen(true)}>
                   삭제하기
-                </button>
-              </div>
+                </Button>
+              )}
+            </div>
+          </form>
+        </div>
+      </div>
+
+      {/* 영어 모임 삭제 확인 모달 */}
+      <Transition
+        show={isDeleteModalOpen}
+        enter="transition-opacity duration-300"
+        enterFrom="opacity-0"
+        enterTo="opacity-100"
+        leave="transition-opacity duration-300"
+        leaveFrom="opacity-100"
+        leaveTo="opacity-0">
+        <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-lg shadow-xl">
+            <h3 className="text-xl font-semibold text-gray-800">
+              정말 영어 모임을 삭제하시겠습니까?
+            </h3>
+            <p className="text-gray-600 mt-2">삭제한 영어 모임은 복구할 수 없습니다.</p>
+            <div className="mt-6 flex justify-between">
+              <button
+                onClick={() => setIsDeleteModalOpen(false)}
+                className="text-gray-700 hover:text-gray-900">
+                취소
+              </button>
+              <button
+                onClick={handleDeleteCircle}
+                className="bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600">
+                삭제하기
+              </button>
             </div>
           </div>
-        </Transition>
-      </div>
-    </Suspense>
+        </div>
+      </Transition>
+    </div>
   )
 }
 
-export default CircleCreatePage
+export default function CircleCreate() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <CircleCreatePage />
+    </Suspense>
+  )
+}
