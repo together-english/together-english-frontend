@@ -3,16 +3,23 @@ import {NextPage} from 'next'
 import Image from 'next/image'
 import {useParams, useRouter} from 'next/navigation'
 import {useState, useEffect} from 'react'
-import {get} from '@/server'
+import {get, postWithJwt, putWithJwt, delWithJwt, patchWithJwt} from '@/server' // 제공된 유틸리티
+import {TComment, TCommentPage} from '@/types/comment'
 import {TCircleDetail, TCircleSchedule} from '@/types/circle'
 import {TApiResponse} from '@/types/common'
 import {City, StatusEnum} from '@/types/status'
 import Button from '@/components/button/Button'
 import {useAuth} from '@/contexts'
+import CommentEditor from '@/components/comment/CommentEditor'
+import CommentList from '@/components/comment/CommentList'
+import LoginModal from '@/components/modal/LoginModal'
 
 const CircleDetailPage: NextPage = () => {
   const {id} = useParams()
   const [circleDetail, setCircleDetail] = useState<TCircleDetail | null>(null)
+  const [commentPage, setCommentPage] = useState<TCommentPage | null>(null)
+  const [showLoginModal, setShowLoginModal] = useState(false)
+  const [currentPage, setCurrentPage] = useState(0)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const {signInResponse} = useAuth()
@@ -23,6 +30,98 @@ const CircleDetailPage: NextPage = () => {
   }
   const handleEditClick = () => {
     router.push(`/circle/manage?id=${id}`)
+  }
+
+  const fetchComments = async (page: number = 0) => {
+    try {
+      const query = new URLSearchParams({
+        circleId: id as string,
+        page: page.toString(),
+        size: '10'
+      }).toString()
+      const response = await get(`/comment?${query}`)
+      const result: TApiResponse<TCommentPage> = await response.json()
+      if (result.status === 'success' && result.data) {
+        setCommentPage(result.data)
+        setCurrentPage(page)
+      } else {
+        console.error('Failed to fetch comments:', result.message)
+        setError('댓글을 불러오는 데 실패했습니다.')
+      }
+    } catch (error) {
+      console.error('댓글 조회 오류:', error)
+      setError('댓글 조회 중 오류가 발생했습니다.')
+    }
+  }
+
+  const handlePageChange = (page: number) => {
+    fetchComments(page)
+  }
+
+  const handlePostComment = async (content: string) => {
+    if (!signInResponse) {
+      setShowLoginModal(true)
+      return false
+    }
+    try {
+      const response = await postWithJwt('/comment', {circleId: id, content})
+      const result = await response.json()
+      if (result.status === 'success') {
+        fetchComments(currentPage) // 현재 페이지 유지하며 갱신
+        return true
+      } else {
+        alert('댓글 작성에 실패했습니다: ' + result.message)
+        return false
+      }
+    } catch (error) {
+      console.error('댓글 작성 오류:', error)
+      alert('댓글 작성 중 오류가 발생했습니다.')
+      return false
+    }
+  }
+
+  const handleUpdateComment = async (commentId: string, content: string) => {
+    if (!signInResponse) {
+      setShowLoginModal(true)
+      return false
+    }
+    try {
+      const response = await putWithJwt('/comment', {commentId, content})
+      const result = await response.json()
+      if (result.status === 'success') {
+        fetchComments(currentPage) // 갱신
+        return true
+      } else {
+        alert('댓글 수정에 실패했습니다: ' + result.message)
+        return false
+      }
+    } catch (error) {
+      console.error('댓글 수정 오류:', error)
+      alert('댓글 수정 중 오류가 발생했습니다.')
+      return false
+    }
+  }
+
+  const handleDeleteComment = async (commentId: string) => {
+    if (!signInResponse) {
+      setShowLoginModal(true)
+      return false
+    }
+    try {
+      const response = await delWithJwt(`/comment/${commentId}`)
+      const result = await response.json()
+      if (result.status === 'success') {
+        fetchComments(currentPage) // 갱신
+        return true
+      } else {
+        alert('댓글 삭제에 실패했습니다: ' + result.message)
+        return false
+      }
+    } catch (error) {
+      console.error('댓글 삭제 오류:', error)
+      alert('댓글 삭제 중 오류가 발생했습니다.')
+      return false
+    }
   }
 
   useEffect(() => {
@@ -48,6 +147,7 @@ const CircleDetailPage: NextPage = () => {
         console.log(signInResponse?.memberDto.nickname)
         console.log(result.data?.leaderName)
       })
+    fetchComments(currentPage)
   }, [id, signInResponse])
 
   if (loading) {
@@ -138,9 +238,25 @@ const CircleDetailPage: NextPage = () => {
                 )}
               </div>
             </div>
+            {commentPage && (
+              <CommentList
+                comments={commentPage.content}
+                pageData={commentPage}
+                onPageChange={handlePageChange}
+                onUpdateComment={handleUpdateComment}
+                onDeleteComment={handleDeleteComment}
+                currentNickname={signInResponse?.memberDto.nickname || ''}
+              />
+            )}
+            <CommentEditor
+              circleId={id as string}
+              nickname={signInResponse?.memberDto.nickname || '익명'}
+              onCommentPosted={handlePostComment}
+            />
           </div>
         </div>
       </div>
+      <LoginModal show={showLoginModal} onClose={() => setShowLoginModal(false)} />
     </div>
   )
 }
