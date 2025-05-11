@@ -4,7 +4,7 @@ import Image from 'next/image'
 import {useParams, useRouter} from 'next/navigation'
 import {useState, useEffect} from 'react'
 import {get, postWithJwt, putWithJwt, delWithJwt, patchWithJwt} from '@/server' // 제공된 유틸리티
-import {TComment, TCommentPage} from '@/types/comment'
+import {TCommentPage} from '@/types/comment'
 import {TCircleDetail, TCircleSchedule} from '@/types/circle'
 import {TApiResponse} from '@/types/common'
 import {City, StatusEnum} from '@/types/status'
