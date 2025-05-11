@@ -13,6 +13,7 @@ import {useAuth} from '@/contexts'
 import CommentEditor from '@/components/comment/CommentEditor'
 import CommentList from '@/components/comment/CommentList'
 import LoginModal from '@/components/modal/LoginModal'
+import JoinCircleModal from '@/components/modal/JoinCircleMoal'
 
 const CircleDetailPage: NextPage = () => {
   const {id} = useParams()
@@ -24,6 +25,7 @@ const CircleDetailPage: NextPage = () => {
   const [error, setError] = useState<string | null>(null)
   const {signInResponse} = useAuth()
   const [canEdit, setCanEdit] = useState(false)
+  const [isJoinModalOpen, setIsJoinModalOpen] = useState(false)
   const router = useRouter()
   const getCityValue = (key: string): string | 'etc' => {
     return City[key as keyof typeof City]
@@ -195,6 +197,13 @@ const CircleDetailPage: NextPage = () => {
                   </Button>
                 </div>
               )}
+              {!canEdit && signInResponse && (
+                <div className="ml-5 flex gap-2">
+                  <Button color="blue" onClick={() => setIsJoinModalOpen(true)}>
+                    가입 신청하기
+                  </Button>
+                </div>
+              )}
             </div>
 
             {/* 서클 소개 */}
@@ -257,6 +266,14 @@ const CircleDetailPage: NextPage = () => {
         </div>
       </div>
       <LoginModal show={showLoginModal} onClose={() => setShowLoginModal(false)} />
+      <JoinCircleModal
+        isOpen={isJoinModalOpen}
+        onClose={() => setIsJoinModalOpen(false)}
+        circleId={id as string}
+        onSuccess={() => {
+          alert('신청이 완료되었습니다.')
+        }}
+      />
     </div>
   )
 }
