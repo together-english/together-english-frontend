@@ -2,12 +2,9 @@
 
 import {useState} from 'react'
 import {Dialog, DialogPanel, Listbox} from '@headlessui/react'
-import {
-  Bars3Icon,
-  XMarkIcon,
-  CheckIcon,
-  ChevronUpDownIcon
-} from '@heroicons/react/24/outline'
+import {XMarkIcon, CheckIcon, ChevronUpDownIcon} from '@heroicons/react/24/outline'
+import NotificationIcon from '../notification/NotificationIcon'
+import NotificationList from '../notification/NotificationList'
 import Link from 'next/link'
 import {usePathname, useRouter} from 'next/navigation'
 import {useAuth} from '@/contexts'
@@ -22,6 +19,7 @@ const navigation = [
 const userOptions = [
   {name: '내가 찜한 모임', value: 'circle/favorite'},
   {name: '내가 만든 모임', value: 'circle/my'},
+  {name: '영어 모임 가입 요청', value: 'mypage/joinrequest'},
   {name: '마이 페이지', value: 'mypage'},
   {name: '로그아웃', value: 'logout'}
 ]
@@ -29,6 +27,10 @@ const userOptions = [
 export default function Navigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [selectedOption, setSelectedOption] = useState()
+  const [isNotificationOpen, setIsNotificationOpen] = useState(false)
+  const toggleNotifications = () => {
+    setIsNotificationOpen(!isNotificationOpen)
+  }
   const path = usePathname()
   const router = useRouter()
   const {signInResponse, logout} = useAuth()
@@ -85,63 +87,78 @@ export default function Navigation() {
 
         <div className="flex lg:flex-1 lg:justify-end lg:items-center">
           {signInResponse ? (
-            <Listbox value={selectedOption} onChange={handleSelectChange}>
-              <div className="relative mt-1">
-                <Listbox.Button className="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left shadow-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 sm:text-sm">
-                  <span className="flex items-center">
-                    <Image
-                      src={
-                        signInResponse.memberDto.profile || '/images/defaultProfile.png'
-                      }
-                      width={150}
-                      height={150}
-                      alt="Profile"
-                      className="h-8 w-8 rounded-full border-2 border-cyan-600"
-                    />
-                    <span className="ml-3 block truncate">
-                      {signInResponse.memberDto.nickname}님 반갑습니다
-                    </span>
-                  </span>
-                  <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                    <ChevronUpDownIcon
-                      className="h-5 w-5 text-gray-400"
-                      aria-hidden="true"
-                    />
-                  </span>
-                </Listbox.Button>
-                <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                  {userOptions.map((option, idx) => (
-                    <Listbox.Option
-                      key={idx}
-                      className={({active}) =>
-                        `relative cursor-default select-none py-2 pl-3 pr-9 ${
-                          active ? 'bg-cyan-600 text-white' : 'text-gray-900'
-                        }`
-                      }
-                      value={option}>
-                      {({selected, active}) => (
-                        <>
-                          <span
-                            className={`block truncate ${
-                              selected ? 'font-semibold' : 'font-normal'
-                            }`}>
-                            {option.name}
-                          </span>
-                          {selected ? (
-                            <span
-                              className={`absolute inset-y-0 right-0 flex items-center pr-4 ${
-                                active ? 'text-white' : 'text-cyan-600'
-                              }`}>
-                              <CheckIcon className="h-5 w-5" aria-hidden="true" />
-                            </span>
-                          ) : null}
-                        </>
-                      )}
-                    </Listbox.Option>
-                  ))}
-                </Listbox.Options>
+            <div className="flex items-center space-x-4">
+              {/* Notification Icon */}
+              <div className="relative">
+                <NotificationIcon
+                  onClick={toggleNotifications}
+                  hasUnread={false} // This will be updated based on API data
+                />
+                {isNotificationOpen && (
+                  <div className="absolute right-0 mt-2 z-10">
+                    <NotificationList />
+                  </div>
+                )}
               </div>
-            </Listbox>
+              {/* User Profile Dropdown */}
+              <Listbox value={selectedOption} onChange={handleSelectChange}>
+                <div className="relative">
+                  <Listbox.Button className="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left shadow-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 sm:text-sm">
+                    <span className="flex items-center">
+                      <Image
+                        src={
+                          signInResponse.memberDto.profile || '/images/defaultProfile.png'
+                        }
+                        width={150}
+                        height={150}
+                        alt="Profile"
+                        className="h-8 w-8 rounded-full border-2 border-cyan-600"
+                      />
+                      <span className="ml-3 block truncate">
+                        {signInResponse.memberDto.nickname}님 반갑습니다
+                      </span>
+                    </span>
+                    <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                      <ChevronUpDownIcon
+                        className="h-5 w-5 text-gray-400"
+                        aria-hidden="true"
+                      />
+                    </span>
+                  </Listbox.Button>
+                  <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                    {userOptions.map((option, idx) => (
+                      <Listbox.Option
+                        key={idx}
+                        className={({active}) =>
+                          `relative cursor-default select-none py-2 pl-3 pr-9 ${
+                            active ? 'bg-cyan-600 text-white' : 'text-gray-900'
+                          }`
+                        }
+                        value={option}>
+                        {({selected, active}) => (
+                          <>
+                            <span
+                              className={`block truncate ${
+                                selected ? 'font-semibold' : 'font-normal'
+                              }`}>
+                              {option.name}
+                            </span>
+                            {selected ? (
+                              <span
+                                className={`absolute inset-y-0 right-0 flex items-center pr-4 ${
+                                  active ? 'text-white' : 'text-cyan-600'
+                                }`}>
+                                <CheckIcon className="h-5 w-5" aria-hidden="true" />
+                              </span>
+                            ) : null}
+                          </>
+                        )}
+                      </Listbox.Option>
+                    ))}
+                  </Listbox.Options>
+                </div>
+              </Listbox>
+            </div>
           ) : (
             <button
               type="button"

@@ -14,16 +14,20 @@
     "@heroicons/react": "^2.1.5",
     "@reduxjs/toolkit": "^2.2.7",
     "chance": "^1.1.12",
+    "date-fns": "^4.1.0",
+    "lucide-react": "^0.511.0",
     "luxon": "^3.4.4",
     "next": "14.2.3",
     "react": "^18",
     "react-dom": "^18",
     "react-redux": "^9.1.2",
-    "redux": "^5.0.1"
+    "redux": "^5.0.1",
+    "swr": "^2.3.3"
   },
   "devDependencies": {
     "@tailwindcss/line-clamp": "^0.4.4",
     "@types/chance": "^1.1.6",
+    "@types/date-fns": "^2.5.3",
     "@types/luxon": "^3.4.2",
     "@types/node": "^20",
     "@types/react": "^18",
