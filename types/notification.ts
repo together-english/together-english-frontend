@@ -1,20 +1,20 @@
-type Notification {
+type Notification = {
   id: string
   message: string
   viewed: boolean
   createdAt: string
 }
 
-type NotificationPageResponse {
+type NotificationPageResponse = {
   notifications: Notification[]
   lastCreatedAt: string | null
   hasNext: boolean
 }
 
-type MainResponse<T> {
+type MainResponse<T> = {
   data: T
   message: string
   status: number
 }
 
-export type { Notification, NotificationPageResponse, MainResponse }
+export type {Notification, NotificationPageResponse, MainResponse}

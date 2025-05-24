@@ -64,8 +64,8 @@ const CircleJoinRequestsPage: React.FC = () => {
         year,
         month - 1,
         day,
-        hour,
-        minute,
+        parseInt(hour),
+        parseInt(minute),
         second,
         microsecond / 1000
       )
