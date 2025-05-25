@@ -50,6 +50,7 @@ const CircleDetailPage: NextPage = () => {
   const {signInResponse} = useAuth()
   const [canEdit, setCanEdit] = useState(false)
   const [isJoinModalOpen, setIsJoinModalOpen] = useState(false)
+  const [isMember, setIsMember] = useState(false)
   const router = useRouter()
   const memberPageSize = 10
 
@@ -145,7 +146,7 @@ const CircleDetailPage: NextPage = () => {
       const response = await delWithJwt(`/circle/member/${circleMemberId}/banish`)
       const result = await response.json()
       if (result.status === 'success') {
-        fetchMembers(currentMemberPage) // Refresh member list
+        fetchMembers(currentMemberPage)
         alert('멤버가 추방되었습니다.')
       } else {
         setError(result.message || '멤버 추방에 실패했습니다.')
@@ -153,6 +154,36 @@ const CircleDetailPage: NextPage = () => {
     } catch (error) {
       console.error('멤버 추방 오류:', error)
       setError('멤버 추방 중 오류가 발생했습니다.')
+    }
+  }
+
+  const handleLeaveCircle = async () => {
+    if (!signInResponse || !isMember) {
+      setError('모임 멤버만 탈퇴할 수 있습니다.')
+      return
+    }
+    if (!window.confirm('모임에서 탈퇴하시겠습니까?')) {
+      return
+    }
+    const member = memberPage?.content.find(
+      m => m.nickname === signInResponse.memberDto.nickname
+    )
+    if (!member) {
+      setError('멤버 정보를 찾을 수 없습니다.')
+      return
+    }
+    try {
+      const response = await delWithJwt(`/circle/member/${member.circleMemberId}`)
+      const result = await response.json()
+      if (result.status === 'success') {
+        fetchMembers(currentMemberPage)
+        alert('모임에서 탈퇴되었습니다.')
+      } else {
+        setError(result.message || '모임 탈퇴에 실패했습니다.')
+      }
+    } catch (error) {
+      console.error('모임 탈퇴 오류:', error)
+      setError('모임 탈퇴 중 오류가 발생했습니다.')
     }
   }
 
@@ -230,6 +261,18 @@ const CircleDetailPage: NextPage = () => {
     }
   }
 
+  // Check if the current user is a member
+  useEffect(() => {
+    if (signInResponse && memberPage?.content) {
+      const isUserMember = memberPage.content.some(
+        member => member.nickname === signInResponse.memberDto.nickname
+      )
+      setIsMember(isUserMember)
+    } else {
+      setIsMember(false)
+    }
+  }, [signInResponse, memberPage])
+
   useEffect(() => {
     if (!id) return
     setLoading(true)
@@ -285,9 +328,16 @@ const CircleDetailPage: NextPage = () => {
               )}
               {!canEdit && signInResponse && (
                 <div className="ml-5 flex gap-2">
-                  <Button color="blue" onClick={() => setIsJoinModalOpen(true)}>
-                    가입 신청하기
-                  </Button>
+                  {!isMember && (
+                    <Button color="blue" onClick={() => setIsJoinModalOpen(true)}>
+                      가입 신청하기
+                    </Button>
+                  )}
+                  {isMember && (
+                    <Button color="red" onClick={handleLeaveCircle}>
+                      탈퇴하기
+                    </Button>
+                  )}
                 </div>
               )}
             </div>
