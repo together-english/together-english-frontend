@@ -1,5 +1,5 @@
 'use client'
-import EmailInput from '@/components/input/EmailInput'
+import EmailInput from '@/components/input/emailInput'
 import {useAuth} from '@/contexts'
 import Link from 'next/link'
 import {ChangeEvent, useCallback, useState} from 'react'
